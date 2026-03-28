@@ -16,7 +16,7 @@
 |---|---------|---------|---------|
 | 1 | TIS主要商業模式分析.md | ver. 2.0.0 | 2026-03-28 |
 | 2 | TIS授權平台商業討論.md | ver. 5.1.0 | 2026-03-28 |
-| 3 | index.html (原 TIS_Revenue_Simulation.html) | ver. 7.0.0 | 2026-03-28 |
+| 3 | index.html (原 TIS_Revenue_Simulation.html) | ver. 7.0.1 | 2026-03-28 |
 | 4 | TIS_工研院季度授權分潤結算報告.xlsx | ver. 1.2.0 | 2026-03-28 02:25 |
 
 ---
@@ -99,6 +99,9 @@
 ---
 
 ## 3. index.html（原 TIS_Revenue_Simulation.html）
+
+### ver. 7.0.1 — 2026-03-28
+- **修正 (Z)**：SABCD 評等加權表（Rating Weights）欄位對齊修正——S/A/B/C/D 欄位統一置中對齊（含標題、加權倍數、意義三列）
 
 ### ver. 7.0.0 — 2026-03-28
 - **重大改版 (X)**：統一所有產業 SABCD 配比為 5S/6A/9B/6C/4D（加權總分 51.7）
