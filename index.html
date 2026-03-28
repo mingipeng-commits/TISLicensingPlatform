@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TIS 授權平台收益分潤模擬 ver. 7.1.0</title>
+<title>TIS 授權平台收益分潤模擬 ver. 7.1.1</title>
 <!-- Version Control
+     ver. 7.1.1 | 2026-03-28 16:55 | Fix Step 7 table text wrapping (nowrap causing right-edge overflow)
      ver. 7.1.0 | 2026-03-28 16:50 | Add jurisdiction dimension (US/EP/JP/TW) + SABCD dynamic evolution to rules
      ver. 7.0.2 | 2026-03-28 16:42 | Fix rendered heading still showing v6.3.0; add timestamp to subtitle
      ver. 7.0.1 | 2026-03-28       | Fix SABCD Rating Weights table column alignment (center)
@@ -130,8 +131,8 @@
 <body>
 <div class="container">
 
-<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.1.0</h1>
-<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱 ｜ 最後更新：2026-03-28 16:50</p>
+<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.1.1</h1>
+<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱 ｜ 最後更新：2026-03-28 16:55</p>
 
 <div class="model-change"><strong>v6 假設變更：</strong>在 v5 基礎上新增續約情境 — <strong>B 公司連續續約 3 年</strong>（Y1 原價 → Y2 ×0.975 → Y3 ×0.95），<strong>C 公司續約 2 年</strong>（Y1 原價 → Y2 ×0.975，Y2 結束後退出）。續約折扣依 §7.6 規則（第 2 期 97.5 折、第 3 期+ 95 折）。收款方式維持短/中期全額一次、長期分兩期。分潤按季結算發放。</div>
 
@@ -825,16 +826,16 @@
 <div class="step">
   <div class="step-header"><span class="step-num">7</span>機制重點整理 Key Mechanism Highlights</div>
   <div class="step-body">
-    <table>
-      <thead><tr><th style="width:26%">機制</th><th>本例驗證</th></tr></thead>
+    <table style="table-layout:fixed;">
+      <thead><tr><th style="width:22%">機制</th><th style="white-space:normal;">本例驗證</th></tr></thead>
       <tbody>
-        <tr><td><strong>統一 SABCD 約束</strong></td><td>所有產業統一採用 5S/6A/9B/6C/4D 配比，加權總分皆為 51.7。D 和 A 同為半導體，B 光電，C 生技——加權總分一致，但各自從不同供應商選取。D 偏重工研院（21 件），A 稍分散（工研院:19, 某大學:7）。</td></tr>
-        <tr><td><strong>長約 = 10 倍價值</strong></td><td>D 的 3 年約中，工研院每件平均 5,980 元；A 的 3 月約中僅 602 元。差距約 10 倍。供應商有強動機推薦客戶選長約。</td></tr>
-        <tr><td><strong>續約 = 營收倍增引擎</strong></td><td>B 連續續約 3 年、C 續約 2 年，使總營收從 546,480 增至 856,548（+56.7%）。續約折扣（97.5%→95%）對營收影響溫和，但對客戶留存激勵顯著。</td></tr>
-        <tr><td><strong>同產業重疊 = 雙重收益</strong></td><td>v5 重疊僅限同產業 D∩A 共 10 件（工研院:4, 某大學:4, NPE X:2），這些專利從 D 和 A 的訂閱中各獲一次分潤。供應商提升同產業專利品質可增加「被多選」機率。</td></tr>
-        <tr><td><strong>SABCD 驅動品質溢價</strong></td><td>同為工研院，在 D 的組合中佔 68.3%（加權 35.3/51.7），在 C 的組合中僅 43.3%（22.4/51.7）。統一配比下，差異完全來自供應商在各等級的專利分配——高評等專利 = 更大份額。</td></tr>
-        <tr><td><strong>小池高命中策略</strong></td><td>NPE X入池僅 100 件，但授權率最高（20%），每件入池平均 900 元（高於工研院的 604 和某大學的 641）。規模小但精準定位的供應商有生存空間。</td></tr>
-        <tr><td><strong>TIS 收入結構穩定</strong></td><td>無論供應商分配或續約狀態如何變化，TIS 固定拿 34.5%（平台費 + 池分成）。不參與供應商之間的分配風險。</td></tr>
+        <tr><td><strong>統一 SABCD 約束</strong></td><td style="white-space:normal;">所有產業統一採用 5S/6A/9B/6C/4D 配比，加權總分皆為 51.7。D 和 A 同為半導體，B 光電，C 生技——加權總分一致，但各自從不同供應商選取。D 偏重工研院（21 件），A 稍分散（工研院:19, 某大學:7）。</td></tr>
+        <tr><td><strong>長約 = 10 倍價值</strong></td><td style="white-space:normal;">D 的 3 年約中，工研院每件平均 5,980 元；A 的 3 月約中僅 602 元。差距約 10 倍。供應商有強動機推薦客戶選長約。</td></tr>
+        <tr><td><strong>續約 = 營收倍增引擎</strong></td><td style="white-space:normal;">B 連續續約 3 年、C 續約 2 年，使總營收從 546,480 增至 856,548（+56.7%）。續約折扣（97.5%→95%）對營收影響溫和，但對客戶留存激勵顯著。</td></tr>
+        <tr><td><strong>同產業重疊 = 雙重收益</strong></td><td style="white-space:normal;">v5 重疊僅限同產業 D∩A 共 10 件（工研院:4, 某大學:4, NPE X:2），這些專利從 D 和 A 的訂閱中各獲一次分潤。供應商提升同產業專利品質可增加「被多選」機率。</td></tr>
+        <tr><td><strong>SABCD 驅動品質溢價</strong></td><td style="white-space:normal;">同為工研院，在 D 的組合中佔 68.3%（加權 35.3/51.7），在 C 的組合中僅 43.3%（22.4/51.7）。統一配比下，差異完全來自供應商在各等級的專利分配——高評等專利 = 更大份額。</td></tr>
+        <tr><td><strong>小池高命中策略</strong></td><td style="white-space:normal;">NPE X入池僅 100 件，但授權率最高（20%），每件入池平均 900 元（高於工研院的 604 和某大學的 641）。規模小但精準定位的供應商有生存空間。</td></tr>
+        <tr><td><strong>TIS 收入結構穩定</strong></td><td style="white-space:normal;">無論供應商分配或續約狀態如何變化，TIS 固定拿 34.5%（平台費 + 池分成）。不參與供應商之間的分配風險。</td></tr>
       </tbody>
     </table>
   </div>
