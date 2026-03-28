@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TIS 授權平台收益分潤模擬 ver. 7.0.2</title>
+<title>TIS 授權平台收益分潤模擬 ver. 7.1.0</title>
 <!-- Version Control
+     ver. 7.1.0 | 2026-03-28 16:50 | Add jurisdiction dimension (US/EP/JP/TW) + SABCD dynamic evolution to rules
      ver. 7.0.2 | 2026-03-28 16:42 | Fix rendered heading still showing v6.3.0; add timestamp to subtitle
      ver. 7.0.1 | 2026-03-28       | Fix SABCD Rating Weights table column alignment (center)
      ver. 7.0.0 | 2026-03-28       | Flatten SABCD to uniform 5/6/9/6/4 across all industries (weighted 51.7)
@@ -129,8 +130,8 @@
 <body>
 <div class="container">
 
-<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.0.2</h1>
-<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年，含續約折扣與收款/發放時程 ｜ 統一 SABCD 配比 5S/6A/9B/6C/4D ｜ 最後更新：2026-03-28 16:42</p>
+<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.1.0</h1>
+<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱 ｜ 最後更新：2026-03-28 16:50</p>
 
 <div class="model-change"><strong>v6 假設變更：</strong>在 v5 基礎上新增續約情境 — <strong>B 公司連續續約 3 年</strong>（Y1 原價 → Y2 ×0.975 → Y3 ×0.95），<strong>C 公司續約 2 年</strong>（Y1 原價 → Y2 ×0.975，Y2 結束後退出）。續約折扣依 §7.6 規則（第 2 期 97.5 折、第 3 期+ 95 折）。收款方式維持短/中期全額一次、長期分兩期。分潤按季結算發放。</div>
 
@@ -225,12 +226,18 @@
     </div>
 
     <div class="rules-section">
-      <div class="rules-title">6. 統一 SABCD 約束 Uniform SABCD Constraint</div>
-      <p>所有產業採用<strong>統一的 SABCD 配比 5S/6A/9B/6C/4D</strong>（依初始比例 15/20/30/20/15 分配 30 件）。所有被授權人的<strong>加權總分一律為 51.7</strong>。不同被授權人可從不同供應商選取相同評等的專利。</p>
+      <div class="rules-title">6. SABCD 配比約束 SABCD Constraint</div>
+      <p><strong>初始配比：</strong>營運初期所有產業採用統一 SABCD 配比 <strong>5S/6A/9B/6C/4D</strong>（依初始比例 15/20/30/20/15），加權總分 <strong>51.7</strong>。<br>
+      <strong>動態演進：</strong>隨更多供應方加入，各產業的 SABCD 實際比例將因新專利的等級分布而自然分化。新訂閱者依<strong>訂閱當下該國家×產業的實際配比</strong>分配 30 件。已生效授權包不受影響。</p>
     </div>
 
     <div class="rules-section">
-      <div class="rules-title">7. 供應商分潤計算 Licensor Allocation</div>
+      <div class="rules-title">7. 國家別維度 Jurisdiction Dimension</div>
+      <p>每份訂閱 = <strong>1 個國家 × 1 個產業 × 30 個專利</strong>。首選四國：<strong>美國（US）、歐洲（EP）、日本（JP）、台灣（TW）</strong>。同一專利家族在不同國家的註冊視為不同專利權，各國家×產業的 SABCD 配比獨立計算。</p>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">8. 供應商分潤計算 Licensor Allocation</div>
       <div class="formula">供應商 X 從被授權人 Y 獲得的分潤 = Y 的供應商池(75%) × ( X 在 Y 選擇中的加權分 ÷ Y 的加權總分 )</div>
       <p>同一件專利若被多位被授權人選擇，該專利的供應商從<strong>每位被授權人的訂閱中各獲一次分潤</strong>。</p>
     </div>
