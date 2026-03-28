@@ -6,7 +6,7 @@
 
 **Created:** 2026-03-24
 **Last Updated:** 2026-03-27 21:42
-**Version:** ver. 6.0.0（新增國家別維度 US/EP/JP/TW、SABCD 動態演進機制、訂閱結構=國家×產業×30 件 | 2026-03-28 16:50）
+**Version:** ver. 6.0.0（新增國家別維度 US/EP/JP/TW、SABCD 動態演進機制、訂閱結構=國家×產業×30 件 | 2026-03-28 19:20）
 **Status:** Active — 商業模式一子文件
 **版本紀錄：** [Ver_Control.md](Ver_Control.md)
 
