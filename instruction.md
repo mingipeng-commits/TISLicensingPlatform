@@ -74,7 +74,8 @@ These are the core parameters shared across documents. When changing any of thes
 | Renewal discounts | 2nd term ×0.975 / 3rd+ term ×0.95 (cap) | 商業討論 §7.6 |
 | Revenue waterfall | Gross → 5% tax → 15% platform fee → pool (75% supplier / 25% TIS) | 商業討論 §6.1 |
 | SABCD weights | S=3.0× / A=2.0× / B=1.5× / C=1.2× / D=1.0× | 商業討論 §3.2 |
-| Patents per package | 30 patents, allocated by SABCD ratio | 商業討論 §4 |
+| Uniform SABCD split | 5S/6A/9B/6C/4D per 30-patent pack (all industries, weighted 51.7) | 商業討論 §3.3 |
+| Patents per package | 30 patents, allocated by uniform SABCD ratio | 商業討論 §4 |
 | Licensing periods | 3 months / 1 year / 3 years | 商業討論 §4 |
 | Payment terms | Short/Mid: full upfront; Long: 50% at M1, 50% at M19 | 商業討論 §7.5 |
 | ABCD simulation customers | D (3yr Premium), B (1yr×3 Pro), C (1yr×2 Pro), A (3mo Plus) | 商業討論 §1.1 |
