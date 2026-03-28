@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TIS 授權平台收益分潤模擬 ver. 7.1.2</title>
+<title>TIS 授權平台收益分潤模擬 ver. 7.1.3</title>
 <!-- Version Control
+     ver. 7.1.3 | 2026-03-28 19:48 | Update model-change banner from v6 to v7 (add SABCD + jurisdiction info)
      ver. 7.1.2 | 2026-03-28 19:34 | Fix incorrect timestamps (use actual Taipei time UTC+8)
      ver. 7.1.1 | 2026-03-28 19:30 | Fix Step 7 table text wrapping (nowrap causing right-edge overflow)
      ver. 7.1.0 | 2026-03-28 16:50 | Add jurisdiction dimension (US/EP/JP/TW) + SABCD dynamic evolution to rules
@@ -132,10 +133,10 @@
 <body>
 <div class="container">
 
-<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.1.2</h1>
-<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱 ｜ 最後更新：2026-03-28 19:34</p>
+<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.1.3</h1>
+<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱 ｜ 最後更新：2026-03-28 19:48</p>
 
-<div class="model-change"><strong>v6 假設變更：</strong>在 v5 基礎上新增續約情境 — <strong>B 公司連續續約 3 年</strong>（Y1 原價 → Y2 ×0.975 → Y3 ×0.95），<strong>C 公司續約 2 年</strong>（Y1 原價 → Y2 ×0.975，Y2 結束後退出）。續約折扣依 §7.6 規則（第 2 期 97.5 折、第 3 期+ 95 折）。收款方式維持短/中期全額一次、長期分兩期。分潤按季結算發放。</div>
+<div class="model-change"><strong>v7 模擬假設：</strong>續約情境 — <strong>B 公司連續續約 3 年</strong>（Y1 原價 → Y2 ×0.975 → Y3 ×0.95），<strong>C 公司續約 2 年</strong>（Y1 原價 → Y2 ×0.975，Y2 結束後退出）。續約折扣依 §7.6 規則（第 2 期 97.5 折、第 3 期+ 95 折）。收款方式維持短/中期全額一次、長期分兩期。分潤按季結算發放。初始 SABCD 統一配比 <strong>5S/6A/9B/6C/4D</strong>（加權 51.7），隨供應方加入各產業配比將動態演進。每份訂閱指定 <strong>1 國家（US/EP/JP/TW）× 1 產業 × 30 專利</strong>。</div>
 
 <!-- ===== RULES: Collapsible ===== -->
 <details class="rules-panel">
