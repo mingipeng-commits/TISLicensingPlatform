@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIS 授權平台收益分潤模擬 ver. 6.3.0</title>
+<!-- Version Control
+     ver. 6.3.0 | 2026-03-28 02:25 | Basic→Plus rename + 4-4-4 ranking split (電子零組件→Premium)
+     ver. 6.2.0 | 2026-03-28 02:13 | Standard→Pro rename + tier criteria changed to patent volume
+     ver. 6.1.1 | 2026-03-28 09:40 | Bug fix: ITRI invoice tax calc (payout already incl. 5% tax)
+     ver. 6.1.0 | 2026-03-28 09:00 | Added Step 8: ITRI Quarterly Payout Projection
+     ver. 6.0.0 | 2026-03-26       | Renewal Scenario (B x 3yr + C x 2yr)
+     Full log: Ver_Control.md
+-->
+<style>
+  :root {
+    --primary: #1a365d;
+    --accent: #2b6cb0;
+    --accent-light: #ebf4ff;
+    --success: #276749;
+    --success-light: #f0fff4;
+    --warning: #975a16;
+    --warning-light: #fffff0;
+    --purple: #553c9a;
+    --purple-light: #faf5ff;
+    --gray-50: #f7fafc;
+    --gray-100: #edf2f7;
+    --gray-200: #e2e8f0;
+    --gray-300: #cbd5e0;
+    --gray-600: #718096;
+    --gray-800: #2d3748;
+    --radius: 8px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif; color: var(--gray-800); background: var(--gray-50); line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+  h1 { color: var(--primary); font-size: 1.6rem; margin-bottom: 6px; }
+  .subtitle { color: var(--gray-600); font-size: 0.95rem; margin-bottom: 28px; }
+  .step { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
+  .step-header { background: var(--primary); color: #fff; padding: 12px 20px; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 10px; }
+  .step-num { background: rgba(255,255,255,0.2); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+  .step-body { padding: 20px; }
+  .step-body p { margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.86rem; }
+  th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--gray-200); }
+  th { background: var(--gray-100); font-weight: 600; color: var(--primary); white-space: nowrap; }
+  td { white-space: nowrap; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .highlight { background: var(--accent-light); }
+  .highlight-green { background: var(--success-light); }
+  .highlight-yellow { background: var(--warning-light); }
+  .highlight-purple { background: var(--purple-light); }
+  .total-row { font-weight: 700; background: var(--gray-100); }
+  .formula { background: var(--gray-100); border-left: 4px solid var(--accent); padding: 10px 16px; border-radius: 0 var(--radius) var(--radius) 0; margin: 12px 0; font-size: 0.86rem; font-family: "SF Mono", "Fira Code", monospace; }
+  .note { background: var(--warning-light); border-left: 4px solid var(--warning); padding: 10px 16px; border-radius: 0 var(--radius) var(--radius) 0; margin: 12px 0; font-size: 0.84rem; color: var(--warning); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.74rem; font-weight: 600; }
+  .badge-s { background: #fed7d7; color: #9b2c2c; }
+  .badge-a { background: #feebc8; color: #9c4221; }
+  .badge-b { background: #fefcbf; color: #975a16; }
+  .badge-c { background: #c6f6d5; color: #276749; }
+  .badge-d { background: #e2e8f0; color: #4a5568; }
+  .split-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+  .split-grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+  @media (max-width: 900px) { .split-grid2, .split-grid4 { grid-template-columns: 1fr; } }
+  .split-card { border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px; }
+  .split-card h4 { color: var(--accent); margin-bottom: 8px; font-size: 0.92rem; }
+  .summary-box { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; border-radius: var(--radius); padding: 24px; margin: 12px 0; }
+  .summary-box h3 { margin-bottom: 12px; font-size: 1.1rem; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+  .summary-item { text-align: center; }
+  .summary-item .label { font-size: 0.78rem; opacity: 0.85; }
+  .summary-item .value { font-size: 1.3rem; font-weight: 700; }
+  .overlap-note { display: flex; align-items: flex-start; gap: 8px; background: #ebf4ff; padding: 12px 16px; border-radius: var(--radius); margin: 12px 0; font-size: 0.84rem; }
+  .overlap-note::before { content: "💡"; font-size: 1.1rem; flex-shrink: 0; }
+  .section-label { font-weight: 600; color: var(--primary); margin: 16px 0 8px; font-size: 0.95rem; }
+  /* Gantt */
+  .gantt { margin: 16px 0; overflow-x: auto; }
+  .gantt-row { display: flex; align-items: center; margin-bottom: 6px; }
+  .gantt-label { width: 100px; font-size: 0.82rem; font-weight: 600; flex-shrink: 0; text-align: right; padding-right: 10px; }
+  .gantt-track { display: flex; flex: 1; height: 28px; position: relative; }
+  .gantt-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.68rem; font-weight: 600; position: absolute; }
+  .gantt-grid { display: flex; flex: 1; }
+  .gantt-cell { flex: 1; border-right: 1px solid var(--gray-200); height: 28px; min-width: 14px; }
+  .gantt-cell:last-child { border-right: none; }
+  .gantt-header { display: flex; align-items: center; margin-bottom: 2px; }
+  .gantt-header-label { width: 100px; flex-shrink: 0; }
+  .gantt-header-months { display: flex; flex: 1; }
+  .gantt-header-months span { flex: 1; text-align: center; font-size: 0.6rem; color: var(--gray-600); min-width: 14px; }
+  .gantt-year-row { display: flex; align-items: center; margin-bottom: 0; }
+  .gantt-year-row .gantt-header-label { width: 100px; flex-shrink: 0; }
+  .gantt-year-row .gantt-years { display: flex; flex: 1; }
+  .gantt-year-row .gantt-years span { text-align: center; font-size: 0.76rem; font-weight: 700; color: var(--primary); border-bottom: 2px solid var(--primary); padding-bottom: 2px; }
+  .gantt-month-rev { display: flex; align-items: center; margin-top: 4px; }
+  .gantt-month-rev .gantt-label { font-size: 0.72rem; color: var(--gray-600); font-weight: 400; }
+  .gantt-month-rev .gantt-rev-cells { display: flex; flex: 1; }
+  .gantt-month-rev .gantt-rev-cells span { flex: 1; text-align: center; font-size: 0.56rem; min-width: 14px; padding: 2px 0; font-variant-numeric: tabular-nums; }
+  .waterfall { display: flex; flex-direction: column; gap: 5px; margin: 12px 0; }
+  .wf-row { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; }
+  .wf-label { width: 200px; text-align: right; color: var(--gray-600); flex-shrink: 0; }
+  .wf-bar { height: 26px; border-radius: 4px; display: flex; align-items: center; padding: 0 10px; color: #fff; font-weight: 600; font-size: 0.78rem; min-width: 50px; }
+  .wf-val { width: 120px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .model-change { background: #fed7e2; border-left: 4px solid #b83280; padding: 10px 16px; border-radius: 0 var(--radius) var(--radius) 0; margin: 12px 0; font-size: 0.84rem; color: #97266d; }
+  /* Collapsible Rules Panel */
+  .rules-panel { background: #fff; border: 2px solid var(--accent); border-radius: var(--radius); margin: 20px 0; overflow: hidden; }
+  .rules-toggle { background: linear-gradient(135deg, var(--accent), #3182ce); color: #fff; padding: 14px 20px; font-weight: 700; font-size: 1.05rem; cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; user-select: none; }
+  .rules-toggle::-webkit-details-marker { display: none; }
+  .rules-toggle::before { content: "▶"; font-size: 0.75rem; transition: transform 0.2s ease; display: inline-block; }
+  details[open] > .rules-toggle::before { transform: rotate(90deg); }
+  .rules-toggle::after { content: "（點擊展開 / 收合）"; font-size: 0.78rem; font-weight: 400; opacity: 0.8; margin-left: auto; }
+  .rules-body { padding: 20px; }
+  .rules-section { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200); }
+  .rules-section:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+  .rules-title { font-weight: 700; color: var(--primary); font-size: 0.95rem; margin-bottom: 10px; }
+  .rules-section p { font-size: 0.86rem; margin-bottom: 8px; }
+  /* Flow diagram */
+  .rules-flow { display: flex; align-items: flex-start; gap: 6px; margin: 12px 0; flex-wrap: wrap; }
+  .flow-step { display: flex; align-items: flex-start; gap: 8px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 10px 12px; flex: 1; min-width: 140px; }
+  .flow-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
+  .flow-text { font-size: 0.8rem; line-height: 1.4; }
+  .flow-text strong { display: block; font-size: 0.85rem; }
+  .flow-note { color: var(--gray-600); font-size: 0.74rem; }
+  .flow-arrow { color: var(--accent); font-size: 1.2rem; font-weight: 700; align-self: center; flex-shrink: 0; }
+  @media (max-width: 700px) { .rules-flow { flex-direction: column; } .flow-arrow { transform: rotate(90deg); align-self: center; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 6.3.0</h1>
+<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年，含續約折扣與收款/發放時程 ｜ 最後更新：2026-03-28</p>
+
+<div class="model-change"><strong>v6 假設變更：</strong>在 v5 基礎上新增續約情境 — <strong>B 公司連續續約 3 年</strong>（Y1 原價 → Y2 ×0.975 → Y3 ×0.95），<strong>C 公司續約 2 年</strong>（Y1 原價 → Y2 ×0.975，Y2 結束後退出）。續約折扣依 §7.6 規則（第 2 期 97.5 折、第 3 期+ 95 折）。收款方式維持短/中期全額一次、長期分兩期。分潤按季結算發放。</div>
+
+<!-- ===== RULES: Collapsible ===== -->
+<details class="rules-panel">
+  <summary class="rules-toggle">基本計算與分配規則 Calculation &amp; Distribution Rules</summary>
+  <div class="rules-body">
+
+    <div class="rules-section">
+      <div class="rules-title">1. 產業分類與 MSRP 價格帶 Industry Categories &amp; MSRP</div>
+      <p>平台涵蓋 <strong>12 個產業</strong>，依 TIS 平台專利池中各產業專利數量排名（Patent Volume Ranking）均分為三個 MSRP 價格帶（每帶 4 個產業，2029 年底重新評估）：</p>
+      <table>
+        <thead><tr><th>價格帶</th><th>MSRP 月費</th><th>定義</th><th>涵蓋產業</th></tr></thead>
+        <tbody>
+          <tr style="background:#fff5f5;"><td><strong>Premium</strong></td><td class="num"><strong>9,900</strong></td><td>專利數量排名 Top 4</td><td>半導體/IC 設計、資通訊設備(ICT)、AI/軟體、電子零組件</td></tr>
+          <tr style="background:#fffff0;"><td><strong>Pro</strong></td><td class="num"><strong>8,900</strong></td><td>專利數量排名第 5–8</td><td>光電/面板、汽車零組件、生技醫療/醫材、綠能/儲能</td></tr>
+          <tr style="background:#f0fff4;"><td><strong>Plus</strong></td><td class="num"><strong>7,900</strong></td><td>專利數量排名第 9–12</td><td>機械設備、石化/塑橡膠、金屬製品、紡織/機能布料</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">MSRP 可依市場供需定期調整（調整前 60 天公告）。所有折扣均以訂閱當時的 MSRP 為基準計算。</div>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">2. 訂閱定價 Subscription Pricing（以 Premium 為例）</div>
+      <table>
+        <thead><tr><th>訂閱期</th><th>基準月費</th><th>折扣</th><th>實際月費</th><th>每包專利數</th></tr></thead>
+        <tbody>
+          <tr><td>3 個月</td><td class="num">9,900</td><td class="num">—</td><td class="num"><strong>9,900</strong></td><td class="num">30</td></tr>
+          <tr><td>1 年</td><td class="num">9,900</td><td class="num">×0.90</td><td class="num"><strong>8,910</strong></td><td class="num">30</td></tr>
+          <tr><td>3 年</td><td class="num">9,900</td><td class="num">×0.85</td><td class="num"><strong>8,415</strong></td><td class="num">30</td></tr>
+        </tbody>
+      </table>
+      <table style="margin-top:10px;">
+        <thead><tr><th>價格帶</th><th>短期（3mo）</th><th>中期（1yr）</th><th>長期（3yr）</th></tr></thead>
+        <tbody>
+          <tr><td>Premium</td><td class="num">29,700（9,900/mo）</td><td class="num">106,920（8,910/mo）</td><td class="num">302,940（8,415/mo）</td></tr>
+          <tr><td>Pro</td><td class="num">26,700（8,900/mo）</td><td class="num">96,120（8,010/mo）</td><td class="num">272,340（7,565/mo）</td></tr>
+          <tr><td>Plus</td><td class="num">23,700（7,900/mo）</td><td class="num">85,320（7,110/mo）</td><td class="num">241,740（6,715/mo）</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">期間折扣：短期無折扣、中期 ×0.90、長期 ×0.85 ｜ 續約折扣：第 2 期 ×0.975、第 3 期+ ×0.95（封頂）</div>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">3. 收款與發放 Collection &amp; Payout</div>
+      <table>
+        <thead><tr><th>面向</th><th>短期（3 個月）</th><th>中期（1 年）</th><th>長期（3 年）</th></tr></thead>
+        <tbody>
+          <tr><td><strong>向被授權人收款</strong></td><td>全額一次收取</td><td>全額一次收取</td><td>分兩期：簽約時 50%、第 19 個月 50%</td></tr>
+          <tr><td><strong>向供應商發放分潤</strong></td><td colspan="3">按季結算，每季末（3/6/9/12 月底）統一撥付</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">收款與分潤存在時間差 → TIS 平台擁有天然現金流緩衝（季初收入、季末發放）</div>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">4. 營收分配瀑布 Revenue Waterfall</div>
+      <div class="rules-flow">
+        <div class="flow-step">
+          <div class="flow-icon" style="background:#fc8181;color:#9b2c2c;">稅</div>
+          <div class="flow-text"><strong>營業稅</strong>（國稅局）<br>= 合約總額 ÷ 1.05 × 5%<br><span class="flow-note">內含稅額，非外加</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-icon" style="background:#4299e1;color:#fff;">15%</div>
+          <div class="flow-text"><strong>平台費</strong>（TIS）<br>= 扣稅後金額 × 15%</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-icon" style="background:#48bb78;color:#fff;">75%</div>
+          <div class="flow-text"><strong>供應商分潤</strong><br>= 可分配池 × 75%<br><span class="flow-note">按 SABCD 加權比例分配</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-icon" style="background:#2b6cb0;color:#fff;">25%</div>
+          <div class="flow-text"><strong>TIS 池分成</strong><br>= 可分配池 × 25%</div>
+        </div>
+      </div>
+      <div class="formula">合約總額（含稅）→ 扣營業稅 → 扣 15% 平台費 → 剩餘池 × 75% 歸供應商 / 25% 歸 TIS</div>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">5. SABCD 評等加權 Rating Weights</div>
+      <table>
+        <thead><tr><th>評等</th><th><span class="badge badge-s">S</span></th><th><span class="badge badge-a">A</span></th><th><span class="badge badge-b">B</span></th><th><span class="badge badge-c">C</span></th><th><span class="badge badge-d">D</span></th></tr></thead>
+        <tbody>
+          <tr><td>加權倍數</td><td class="num"><strong>3.0×</strong></td><td class="num"><strong>2.0×</strong></td><td class="num"><strong>1.5×</strong></td><td class="num"><strong>1.2×</strong></td><td class="num"><strong>1.0×</strong></td></tr>
+          <tr><td>意義</td><td>頂級戰略專利</td><td>高價值核心</td><td>實用技術</td><td>一般防禦</td><td>基礎佈局</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">加權分 = (S件數×3) + (A件數×2) + (B件數×1.5) + (C件數×1.2) + (D件數×1)</div>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">6. 產業 SABCD 約束 Industry Constraint</div>
+      <p>每個產業有<strong>固定的 SABCD 配比</strong>（30 件中 S/A/B/C/D 各幾件）。同產業的所有被授權人必須遵循相同配比，因此<strong>加權總分一定相同</strong>。不同被授權人可從不同供應商選取相同評等的專利。</p>
+    </div>
+
+    <div class="rules-section">
+      <div class="rules-title">7. 供應商分潤計算 Licensor Allocation</div>
+      <div class="formula">供應商 X 從被授權人 Y 獲得的分潤 = Y 的供應商池(75%) × ( X 在 Y 選擇中的加權分 ÷ Y 的加權總分 )</div>
+      <p>同一件專利若被多位被授權人選擇，該專利的供應商從<strong>每位被授權人的訂閱中各獲一次分潤</strong>。</p>
+    </div>
+
+  </div>
+</details>
+
+<!-- ===== STEP 1: Scenario ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">1</span>情境設定 Scenario Setup</div>
+  <div class="step-body">
+
+    <p class="section-label">專利池總覽（Patent Pool）</p>
+    <table>
+      <thead><tr><th>專利提供者</th><th>入池總數</th><th>被授權數（唯一）</th><th>未被訂閱</th><th>被訂閱率</th></tr></thead>
+      <tbody>
+        <tr><td>工研院 (Licensor 1)</td><td class="num">500</td><td class="num">65</td><td class="num">435</td><td class="num">13.0%</td></tr>
+        <tr><td>某大學 (Licensor 2)</td><td class="num">200</td><td class="num">25</td><td class="num">175</td><td class="num">12.5%</td></tr>
+        <tr><td>NPE X (Licensor 3)</td><td class="num">100</td><td class="num">20</td><td class="num">80</td><td class="num">20.0%</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">800</td><td class="num">110</td><td class="num">690</td><td class="num">13.8%</td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">被授權人（Licensee）— 需求端</p>
+    <table>
+      <thead>
+        <tr><th>被授權人</th><th>產業</th><th>專利數</th><th>訂閱期</th><th>起始月</th><th>結束月</th><th>折扣</th><th>月費</th><th>收款方式</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-purple"><td><strong>D 公司</strong></td><td>半導體</td><td>30</td><td>3 年</td><td>Jan Y1</td><td>Dec Y3</td><td>×0.85</td><td class="num"><strong>8,415</strong></td><td>分兩期：151,470 (M1) + 151,470 (M19)</td></tr>
+        <tr class="highlight-green"><td><strong>B 公司（Y1）</strong></td><td>光電</td><td>30</td><td>1 年</td><td>Apr Y1</td><td>Mar Y2</td><td>×0.90</td><td class="num"><strong>8,910</strong></td><td>全額一次：106,920</td></tr>
+        <tr class="highlight-green" style="background:#f0fff4;"><td><strong>B 公司（Y2 續約）</strong></td><td>光電</td><td>30</td><td>1 年</td><td>Apr Y2</td><td>Mar Y3</td><td>×0.90×0.975</td><td class="num"><strong>8,687</strong></td><td>全額一次：104,247</td></tr>
+        <tr class="highlight-green" style="background:#e6ffed;"><td><strong>B 公司（Y3 續約）</strong></td><td>光電</td><td>30</td><td>1 年</td><td>Apr Y3</td><td>Mar Y4</td><td>×0.90×0.95</td><td class="num"><strong>8,465</strong></td><td>全額一次：101,574</td></tr>
+        <tr class="highlight-yellow"><td><strong>C 公司（Y1）</strong></td><td>生技</td><td>30</td><td>1 年</td><td>Jul Y1</td><td>Jun Y2</td><td>×0.90</td><td class="num"><strong>8,910</strong></td><td>全額一次：106,920</td></tr>
+        <tr class="highlight-yellow" style="background:#fffff0;"><td><strong>C 公司（Y2 續約）</strong></td><td>生技</td><td>30</td><td>1 年</td><td>Jul Y2</td><td>Jun Y3</td><td>×0.90×0.975</td><td class="num"><strong>8,687</strong></td><td>全額一次：104,247</td></tr>
+        <tr class="highlight"><td><strong>A 公司</strong></td><td>半導體</td><td>30</td><td>3 個月</td><td>Oct Y1</td><td>Dec Y1</td><td>—</td><td class="num"><strong>9,900</strong></td><td>全額一次：29,700</td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">訂閱時間軸 Subscription Timeline — Full 48 Months</p>
+    <div class="gantt">
+      <div class="gantt-year-row">
+        <div class="gantt-header-label"></div>
+        <div class="gantt-years">
+          <span style="flex:12;">Y1（第 1 年）</span>
+          <span style="flex:12;">Y2（第 2 年）</span>
+          <span style="flex:12;">Y3（第 3 年）</span>
+          <span style="flex:12;">Y4（第 4 年）</span>
+        </div>
+      </div>
+      <div class="gantt-header">
+        <div class="gantt-header-label"></div>
+        <div class="gantt-header-months">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+        </div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">D 公司 (3yr)</div>
+        <div class="gantt-track">
+          <div class="gantt-grid"><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div>
+          <div class="gantt-bar" style="left:0%;width:75%;background:#805ad5;">3yr 302,940 ＝ 151,470(M1) + 151,470(M19)</div>
+        </div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">B 公司 (1yr)</div>
+        <div class="gantt-track">
+          <div class="gantt-grid"><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div>
+          <div class="gantt-bar" style="left:6.25%;width:25%;background:#38a169;">1yr 106,920（全額一次收取 M4）</div>
+          <div class="gantt-bar" style="left:31.25%;width:25%;background:#2f855a;">Y2 續約 104,247（M16 收取）</div>
+          <div class="gantt-bar" style="left:56.25%;width:25%;background:#276749;">Y3 續約 101,574（M28 收取）</div>
+        </div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">C 公司 (1yr)</div>
+        <div class="gantt-track">
+          <div class="gantt-grid"><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div>
+          <div class="gantt-bar" style="left:12.5%;width:25%;background:#d69e2e;">1yr 106,920（全額一次收取 M7）</div>
+          <div class="gantt-bar" style="left:37.5%;width:25%;background:#b7791f;">Y2 續約 104,247（M19 收取）</div>
+        </div>
+      </div>
+      <div class="gantt-row">
+        <div class="gantt-label">A 公司 (3mo)</div>
+        <div class="gantt-track">
+          <div class="gantt-grid"><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div><div class="gantt-cell"></div></div>
+          <div class="gantt-bar" style="left:18.75%;width:6.25%;background:#3182ce;">3mo 29,700（全額一次收取 M10）</div>
+        </div>
+      </div>
+      <div class="gantt-month-rev">
+        <div class="gantt-label">月營收 (千)</div>
+        <div class="gantt-rev-cells">
+          <span style="background:#edf2f7;">8.4</span><span style="background:#edf2f7;">8.4</span><span style="background:#edf2f7;">8.4</span>
+          <span style="background:#e6fffa;">17.3</span><span style="background:#e6fffa;">17.3</span><span style="background:#e6fffa;">17.3</span>
+          <span style="background:#fefcbf;">26.2</span><span style="background:#fefcbf;">26.2</span><span style="background:#fefcbf;">26.2</span>
+          <span style="background:#fed7d7;">36.1</span><span style="background:#fed7d7;">36.1</span><span style="background:#fed7d7;">36.1</span>
+          <span style="background:#fefcbf;">26.2</span><span style="background:#fefcbf;">26.2</span><span style="background:#fefcbf;">26.2</span>
+          <span style="background:#e6fffa;">17.3</span><span style="background:#e6fffa;">17.3</span><span style="background:#e6fffa;">17.3</span>
+          <span style="background:#edf2f7;">8.4</span><span style="background:#edf2f7;">8.4</span><span style="background:#edf2f7;">8.4</span>
+          <span style="background:#fefcbf;">26.2</span><span style="background:#fefcbf;">26.2</span><span style="background:#fefcbf;">26.2</span>
+          <span style="background:#e6fffa;">26.0</span><span style="background:#e6fffa;">26.0</span><span style="background:#e6fffa;">26.0</span>
+          <span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span>
+          <span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span>
+          <span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span>
+          <span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span><span style="background:#fefcbf;">25.8</span>
+          <span style="background:#e6fffa;">25.6</span><span style="background:#e6fffa;">25.6</span><span style="background:#e6fffa;">25.6</span>
+          <span style="background:#e6fffa;">16.9</span><span style="background:#e6fffa;">16.9</span><span style="background:#e6fffa;">16.9</span>
+          <span style="background:#e6fffa;">16.9</span><span style="background:#e6fffa;">16.9</span><span style="background:#e6fffa;">16.9</span>
+          <span style="background:#edf2f7;">8.5</span><span style="background:#edf2f7;">8.5</span><span style="background:#edf2f7;">8.5</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+        </div>
+      </div>
+      <div class="gantt-month-rev">
+        <div class="gantt-label" style="font-size:0.72rem;">現金收款 (千)</div>
+        <div class="gantt-rev-cells">
+          <span style="background:#d6bcfa;font-weight:700;">151.5</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#c6f6d5;font-weight:700;">106.9</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#fefcbf;font-weight:700;">106.9</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#bee3f8;font-weight:700;">29.7</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#c6f6d5;font-weight:700;">104.2</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#fed7d7;font-weight:700;">255.7</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#c6f6d5;font-weight:700;">101.6</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span>
+        </div>
+      </div>
+      <div class="gantt-month-rev">
+        <div class="gantt-label" style="font-size:0.72rem;">季末發放 Payout</div>
+        <div class="gantt-rev-cells">
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q1</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q2</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q3</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q4</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q5</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q6</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q7</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q8</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q9</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q10</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q11</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q12</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q13</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q14</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q15</span>
+          <span style="background:#f7fafc;">—</span><span style="background:#f7fafc;">—</span><span style="background:#fff5f5;font-weight:700;color:#c53030;">Q16</span>
+        </div>
+      </div>
+      <div class="gantt-month-rev">
+        <div class="gantt-label">活躍客戶數</div>
+        <div class="gantt-rev-cells">
+          <span>1</span><span>1</span><span>1</span>
+          <span>2</span><span>2</span><span>2</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span style="font-weight:700;color:#c53030;">4</span><span style="font-weight:700;color:#c53030;">4</span><span style="font-weight:700;color:#c53030;">4</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span>3</span><span>3</span><span>3</span>
+          <span>2</span><span>2</span><span>2</span>
+          <span>2</span><span>2</span><span>2</span>
+          <span>1</span><span>1</span><span>1</span>
+          <span>0</span><span>0</span><span>0</span>
+          <span>0</span><span>0</span><span>0</span>
+          <span>0</span><span>0</span><span>0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STEP 2: Per-Licensee Patent Selection ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">2</span>各被授權人的專利選擇組合 Licensee → Licensor Mapping</div>
+  <div class="step-body">
+
+    <p>每位被授權人從專利池中自選 30 件專利，可跨供應商搭配。不同被授權人的選擇<strong>不一定相同</strong>，即使處於同一產業。</p>
+
+    <p class="section-label">各被授權人選擇的供應商分佈</p>
+    <table>
+      <thead>
+        <tr><th>被授權人</th><th>產業</th><th>工研院</th><th>某大學</th><th>NPE X</th><th>合計</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-purple"><td><strong>D 公司</strong></td><td>半導體</td><td class="num">21</td><td class="num">5</td><td class="num">4</td><td class="num"><strong>30</strong></td></tr>
+        <tr class="highlight-green"><td><strong>B 公司</strong></td><td>光電</td><td class="num">16</td><td class="num">8</td><td class="num">6</td><td class="num"><strong>30</strong></td></tr>
+        <tr class="highlight-yellow"><td><strong>C 公司</strong></td><td>生技</td><td class="num">13</td><td class="num">9</td><td class="num">8</td><td class="num"><strong>30</strong></td></tr>
+        <tr class="highlight"><td><strong>A 公司</strong></td><td>半導體</td><td class="num">19</td><td class="num">7</td><td class="num">4</td><td class="num"><strong>30</strong></td></tr>
+        <tr class="total-row"><td colspan="2">授權筆數合計（含重疊）</td><td class="num">69</td><td class="num">29</td><td class="num">22</td><td class="num">120</td></tr>
+        <tr><td colspan="2">唯一專利數</td><td class="num">65</td><td class="num">25</td><td class="num">20</td><td class="num">110</td></tr>
+        <tr style="color:var(--accent);"><td colspan="2">重疊筆數（被 ≥2 人選擇）</td><td class="num">4</td><td class="num">4</td><td class="num">2</td><td class="num">10</td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">專利重疊矩陣 — 僅同產業 D∩A 有重疊</p>
+    <table>
+      <thead>
+        <tr><th>被授權人對</th><th>工研院</th><th>某大學</th><th>NPE X</th><th>共享合計</th><th>說明</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td><strong>D ∩ A</strong></td><td class="num" style="color:#c53030;font-weight:700;">4</td><td class="num" style="color:#c53030;font-weight:700;">4</td><td class="num" style="color:#c53030;font-weight:700;">2</td><td class="num"><strong>10</strong></td><td>同產業（半導體），唯一重疊</td></tr>
+        <tr><td>A ∩ B</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>0</strong></td><td>不同產業，無重疊</td></tr>
+        <tr><td>B ∩ C</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>0</strong></td><td>不同產業，無重疊</td></tr>
+        <tr><td>D ∩ B</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>0</strong></td><td>不同產業，無重疊</td></tr>
+        <tr><td>D ∩ C</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>0</strong></td><td>不同產業，無重疊</td></tr>
+        <tr><td>A ∩ C</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><strong>0</strong></td><td>不同產業，無重疊</td></tr>
+      </tbody>
+    </table>
+
+    <div class="overlap-note">
+      <div><strong>重疊的商業意義：</strong>同一件專利被多位被授權人選擇時，該專利的供應商從<strong>每位被授權人的訂閱費中各獲得一次分潤</strong>。本例中重疊僅發生於同產業 D∩A（半導體），共 10 件專利各獲雙倍收益。供應商提升同產業專利品質可增加「被多選」機率。</div>
+    </div>
+
+    <p class="section-label">產業 SABCD 分佈約束 Industry SABCD Distribution</p>
+    <div class="note"><strong>v4 核心規則：</strong>每個產業有固定的 SABCD 件數配比。訂閱該產業的所有被授權人，其 30 件專利必須符合該產業的 SABCD 分佈，因此<strong>同產業被授權人的加權總分一定相同</strong>。</div>
+    <table>
+      <thead>
+        <tr><th>產業</th><th><span class="badge badge-s">S</span></th><th><span class="badge badge-a">A</span></th><th><span class="badge badge-b">B</span></th><th><span class="badge badge-c">C</span></th><th><span class="badge badge-d">D</span></th><th>合計</th><th>加權總分</th><th>訂閱者</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-purple"><td><strong>半導體</strong></td><td class="num">3</td><td class="num">6</td><td class="num">8</td><td class="num">7</td><td class="num">6</td><td class="num">30</td><td class="num"><strong>47.4</strong></td><td>D 公司、A 公司</td></tr>
+        <tr class="highlight-green"><td><strong>光電</strong></td><td class="num">2</td><td class="num">5</td><td class="num">8</td><td class="num">8</td><td class="num">7</td><td class="num">30</td><td class="num"><strong>44.6</strong></td><td>B 公司</td></tr>
+        <tr class="highlight-yellow"><td><strong>生技</strong></td><td class="num">1</td><td class="num">4</td><td class="num">8</td><td class="num">8</td><td class="num">9</td><td class="num">30</td><td class="num"><strong>41.6</strong></td><td>C 公司</td></tr>
+      </tbody>
+    </table>
+    <div class="formula">加權分 = (S×3) + (A×2) + (B×1.5) + (C×1.2) + (D×1) ｜ 半導體最高(47.4)，因 S 級最多(3件)</div>
+
+    <p class="section-label">各被授權人選擇的 SABCD 評等明細（符合產業分佈約束）</p>
+    <div class="split-grid4">
+      <!-- D -->
+      <div class="split-card" style="border-color:#805ad5;">
+        <h4 style="color:#805ad5;">D 公司 — 半導體 (30件, 加權 47.4)</h4>
+        <table>
+          <thead><tr><th>供應商</th><th><span class="badge badge-s">S</span></th><th><span class="badge badge-a">A</span></th><th><span class="badge badge-b">B</span></th><th><span class="badge badge-c">C</span></th><th><span class="badge badge-d">D</span></th><th>件</th><th>加權</th></tr></thead>
+          <tbody>
+            <tr><td>工研院</td><td class="num">2</td><td class="num">4</td><td class="num">6</td><td class="num">5</td><td class="num">4</td><td class="num">21</td><td class="num"><strong>33.0</strong></td></tr>
+            <tr><td>某大學</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">5</td><td class="num"><strong>8.7</strong></td></tr>
+            <tr><td>NPE X</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">4</td><td class="num"><strong>5.7</strong></td></tr>
+            <tr class="total-row"><td>合計</td><td class="num">3</td><td class="num">6</td><td class="num">8</td><td class="num">7</td><td class="num">6</td><td class="num">30</td><td class="num"><strong>47.4</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- A -->
+      <div class="split-card" style="border-color:#3182ce;">
+        <h4 style="color:#3182ce;">A 公司 — 半導體 (30件, 加權 47.4)</h4>
+        <table>
+          <thead><tr><th>供應商</th><th><span class="badge badge-s">S</span></th><th><span class="badge badge-a">A</span></th><th><span class="badge badge-b">B</span></th><th><span class="badge badge-c">C</span></th><th><span class="badge badge-d">D</span></th><th>件</th><th>加權</th></tr></thead>
+          <tbody>
+            <tr><td>工研院</td><td class="num">2</td><td class="num">4</td><td class="num">5</td><td class="num">5</td><td class="num">3</td><td class="num">19</td><td class="num"><strong>30.5</strong></td></tr>
+            <tr><td>某大學</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">1</td><td class="num">2</td><td class="num">7</td><td class="num"><strong>11.2</strong></td></tr>
+            <tr><td>NPE X</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="num">4</td><td class="num"><strong>5.7</strong></td></tr>
+            <tr class="total-row"><td>合計</td><td class="num">3</td><td class="num">6</td><td class="num">8</td><td class="num">7</td><td class="num">6</td><td class="num">30</td><td class="num"><strong>47.4</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- B -->
+      <div class="split-card" style="border-color:#38a169;">
+        <h4 style="color:#38a169;">B 公司 — 光電 (30件, 加權 44.6)</h4>
+        <table>
+          <thead><tr><th>供應商</th><th><span class="badge badge-s">S</span></th><th><span class="badge badge-a">A</span></th><th><span class="badge badge-b">B</span></th><th><span class="badge badge-c">C</span></th><th><span class="badge badge-d">D</span></th><th>件</th><th>加權</th></tr></thead>
+          <tbody>
+            <tr><td>工研院</td><td class="num">1</td><td class="num">3</td><td class="num">5</td><td class="num">4</td><td class="num">3</td><td class="num">16</td><td class="num"><strong>24.3</strong></td></tr>
+            <tr><td>某大學</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td class="num">8</td><td class="num"><strong>12.4</strong></td></tr>
+            <tr><td>NPE X</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">6</td><td class="num"><strong>7.9</strong></td></tr>
+            <tr class="total-row"><td>合計</td><td class="num">2</td><td class="num">5</td><td class="num">8</td><td class="num">8</td><td class="num">7</td><td class="num">30</td><td class="num"><strong>44.6</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- C -->
+      <div class="split-card" style="border-color:#d69e2e;">
+        <h4 style="color:#d69e2e;">C 公司 — 生技 (30件, 加權 41.6)</h4>
+        <table>
+          <thead><tr><th>供應商</th><th><span class="badge badge-s">S</span></th><th><span class="badge badge-a">A</span></th><th><span class="badge badge-b">B</span></th><th><span class="badge badge-c">C</span></th><th><span class="badge badge-d">D</span></th><th>件</th><th>加權</th></tr></thead>
+          <tbody>
+            <tr><td>工研院</td><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">3</td><td class="num">4</td><td class="num">13</td><td class="num"><strong>19.1</strong></td></tr>
+            <tr><td>某大學</td><td class="num">0</td><td class="num">1</td><td class="num">3</td><td class="num">3</td><td class="num">2</td><td class="num">9</td><td class="num"><strong>12.1</strong></td></tr>
+            <tr><td>NPE X</td><td class="num">0</td><td class="num">1</td><td class="num">2</td><td class="num">2</td><td class="num">3</td><td class="num">8</td><td class="num"><strong>10.4</strong></td></tr>
+            <tr class="total-row"><td>合計</td><td class="num">1</td><td class="num">4</td><td class="num">8</td><td class="num">8</td><td class="num">9</td><td class="num">30</td><td class="num"><strong>41.6</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="overlap-note">
+      <div><strong>v5 驗證：</strong>D 和 A 同為半導體，SABCD 合計皆為 3S/6A/8B/7C/6D = 47.4（但供應商間分佈不同，D 偏重工研院=21 件，A 偏重工研院=19 件 + 某大學=7 件）。B 光電 = 2S/5A/8B/8C/7D = 44.6。C 生技 = 1S/4A/8B/8C/9D = 41.6。每位被授權人嚴格符合其產業的 SABCD 配比。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STEP 3: Revenue & Waterfall ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">3</span>營收與分潤瀑布 Revenue Waterfall（按被授權人個別計算）</div>
+  <div class="step-body">
+
+    <div class="formula">合約總額（含稅）→ 營業稅 = 總額 / 1.05 × 5%（內含稅額，收款單位為國稅局）→ 扣稅後 → 15% 平台費 (TIS) → 剩餘池 75% 供應商 / 25% TIS</div>
+
+    <div class="split-grid4">
+      <div class="split-card" style="border-color:#805ad5;">
+        <h4 style="color:#805ad5;">D 公司 — 302,940</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">302,940</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">14,426</td></tr>
+          <tr><td>扣稅後</td><td class="num">288,514</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−43,277</td></tr>
+          <tr><td>可分配池</td><td class="num">245,237</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>183,928</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>61,309</strong></td></tr>
+        </table>
+      </div>
+      <div class="split-card" style="border-color:#38a169;">
+        <h4 style="color:#38a169;">B 公司 Y1 — 106,920</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">106,920</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">5,091</td></tr>
+          <tr><td>扣稅後</td><td class="num">101,829</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−15,274</td></tr>
+          <tr><td>可分配池</td><td class="num">86,555</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>64,916</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>21,639</strong></td></tr>
+        </table>
+      </div>
+      <div class="split-card" style="border-color:#2f855a;">
+        <h4 style="color:#2f855a;">B 公司 Y2 續約 — 104,247（×0.975）</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">104,247</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">4,964</td></tr>
+          <tr><td>扣稅後</td><td class="num">99,283</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−14,892</td></tr>
+          <tr><td>可分配池</td><td class="num">84,391</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>63,293</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>21,098</strong></td></tr>
+        </table>
+      </div>
+      <div class="split-card" style="border-color:#276749;">
+        <h4 style="color:#276749;">B 公司 Y3 續約 — 101,574（×0.95）</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">101,574</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">4,837</td></tr>
+          <tr><td>扣稅後</td><td class="num">96,737</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−14,511</td></tr>
+          <tr><td>可分配池</td><td class="num">82,226</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>61,670</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>20,556</strong></td></tr>
+        </table>
+      </div>
+      <div class="split-card" style="border-color:#d69e2e;">
+        <h4 style="color:#d69e2e;">C 公司 Y1 — 106,920</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">106,920</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">5,091</td></tr>
+          <tr><td>扣稅後</td><td class="num">101,829</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−15,274</td></tr>
+          <tr><td>可分配池</td><td class="num">86,555</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>64,916</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>21,639</strong></td></tr>
+        </table>
+      </div>
+      <div class="split-card" style="border-color:#b7791f;">
+        <h4 style="color:#b7791f;">C 公司 Y2 續約 — 104,247（×0.975）</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">104,247</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">4,964</td></tr>
+          <tr><td>扣稅後</td><td class="num">99,283</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−14,892</td></tr>
+          <tr><td>可分配池</td><td class="num">84,391</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>63,293</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>21,098</strong></td></tr>
+        </table>
+      </div>
+      <div class="split-card" style="border-color:#3182ce;">
+        <h4 style="color:#3182ce;">A 公司 — 29,700</h4>
+        <table>
+          <tr><td>合約總額（含稅）</td><td class="num">29,700</td></tr>
+          <tr><td>營業稅 (÷1.05×5%)</td><td class="num" style="color:#c53030;">1,414</td></tr>
+          <tr><td>扣稅後</td><td class="num">28,286</td></tr>
+          <tr><td>− 15% 平台費</td><td class="num" style="color:#2b6cb0;">−4,243</td></tr>
+          <tr><td>可分配池</td><td class="num">24,043</td></tr>
+          <tr class="highlight-green"><td>75% 供應商</td><td class="num"><strong>18,032</strong></td></tr>
+          <tr class="highlight-yellow"><td>25% TIS</td><td class="num"><strong>6,011</strong></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <p class="section-label">TIS 平台總收入</p>
+    <table>
+      <thead><tr><th>來源</th><th>from D</th><th>from B Y1</th><th>from B Y2</th><th>from B Y3</th><th>from C Y1</th><th>from C Y2</th><th>from A</th><th>合計</th></tr></thead>
+      <tbody>
+        <tr><td>15% 平台費</td><td class="num">43,277</td><td class="num">15,274</td><td class="num">14,892</td><td class="num">14,511</td><td class="num">15,274</td><td class="num">14,892</td><td class="num">4,243</td><td class="num"><strong>122,363</strong></td></tr>
+        <tr><td>25% 池分成</td><td class="num">61,309</td><td class="num">21,639</td><td class="num">21,098</td><td class="num">20,556</td><td class="num">21,639</td><td class="num">21,098</td><td class="num">6,011</td><td class="num"><strong>173,350</strong></td></tr>
+        <tr class="total-row"><td>TIS 合計</td><td class="num">104,586</td><td class="num">36,913</td><td class="num">35,990</td><td class="num">35,067</td><td class="num">36,913</td><td class="num">35,990</td><td class="num">10,254</td><td class="num"><strong>295,713</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="formula">營業稅 = 總額 / 1.05 × 5% ｜ TIS 佔總營收：295,713 / 856,548 = <strong>34.5%</strong> ｜ 供應商：520,048 (60.7%) ｜ 稅：40,787 (4.8%)</div>
+  </div>
+</div>
+
+<!-- ===== STEP 4: Licensor Allocation ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">4</span>供應商分潤計算 Licensor Allocation（按被授權人個別加權）</div>
+  <div class="step-body">
+
+    <p>每位被授權人的 75% 供應商池，按<strong>該被授權人所選 30 件專利的 SABCD 加權分</strong>比例分配給各供應商。</p>
+    <div class="formula">供應商 X 從被授權人 Y 獲得的分潤 = Y 的供應商池 × (X 在 Y 選擇中的加權分 / Y 的加權總分)</div>
+
+    <p class="section-label">D 公司 — 供應商池 183,928 NTD（加權總分 47.4）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr class="highlight-purple"><td>工研院</td><td class="num">21</td><td class="num">33.0</td><td class="num">69.6%</td><td class="num"><strong>128,051</strong></td><td class="num">6,098</td></tr>
+        <tr><td>某大學</td><td class="num">5</td><td class="num">8.7</td><td class="num">18.4%</td><td class="num"><strong>33,759</strong></td><td class="num">6,752</td></tr>
+        <tr><td>NPE X</td><td class="num">4</td><td class="num">5.7</td><td class="num">12.0%</td><td class="num"><strong>22,118</strong></td><td class="num">5,530</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">47.4</td><td class="num">100%</td><td class="num">183,928</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">B 公司 Y1 — 供應商池 64,916 NTD（加權總分 44.6）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr class="highlight-green"><td>工研院</td><td class="num">16</td><td class="num">24.3</td><td class="num">54.5%</td><td class="num"><strong>35,369</strong></td><td class="num">2,211</td></tr>
+        <tr><td>某大學</td><td class="num">8</td><td class="num">12.4</td><td class="num">27.8%</td><td class="num"><strong>18,048</strong></td><td class="num">2,256</td></tr>
+        <tr><td>NPE X</td><td class="num">6</td><td class="num">7.9</td><td class="num">17.7%</td><td class="num"><strong>11,499</strong></td><td class="num">1,917</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">44.6</td><td class="num">100%</td><td class="num">64,916</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">B 公司 Y2 續約 — 供應商池 63,293 NTD（加權總分 44.6，×0.975 續約折扣）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr style="background:#f0fff4;"><td>工研院</td><td class="num">16</td><td class="num">24.3</td><td class="num">54.5%</td><td class="num"><strong>34,485</strong></td><td class="num">2,155</td></tr>
+        <tr><td>某大學</td><td class="num">8</td><td class="num">12.4</td><td class="num">27.8%</td><td class="num"><strong>17,597</strong></td><td class="num">2,200</td></tr>
+        <tr><td>NPE X</td><td class="num">6</td><td class="num">7.9</td><td class="num">17.7%</td><td class="num"><strong>11,211</strong></td><td class="num">1,869</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">44.6</td><td class="num">100%</td><td class="num">63,293</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">B 公司 Y3 續約 — 供應商池 61,670 NTD（加權總分 44.6，×0.95 續約折扣）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr style="background:#e6ffed;"><td>工研院</td><td class="num">16</td><td class="num">24.3</td><td class="num">54.5%</td><td class="num"><strong>33,600</strong></td><td class="num">2,100</td></tr>
+        <tr><td>某大學</td><td class="num">8</td><td class="num">12.4</td><td class="num">27.8%</td><td class="num"><strong>17,146</strong></td><td class="num">2,143</td></tr>
+        <tr><td>NPE X</td><td class="num">6</td><td class="num">7.9</td><td class="num">17.7%</td><td class="num"><strong>10,924</strong></td><td class="num">1,821</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">44.6</td><td class="num">100%</td><td class="num">61,670</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">C 公司 Y1 — 供應商池 64,916 NTD（加權總分 41.6）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr class="highlight-yellow"><td>工研院</td><td class="num">13</td><td class="num">19.1</td><td class="num">45.9%</td><td class="num"><strong>29,805</strong></td><td class="num">2,293</td></tr>
+        <tr><td>某大學</td><td class="num">9</td><td class="num">12.1</td><td class="num">29.1%</td><td class="num"><strong>18,882</strong></td><td class="num">2,098</td></tr>
+        <tr><td>NPE X</td><td class="num">8</td><td class="num">10.4</td><td class="num">25.0%</td><td class="num"><strong>16,229</strong></td><td class="num">2,029</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">41.6</td><td class="num">100%</td><td class="num">64,916</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">C 公司 Y2 續約 — 供應商池 63,293 NTD（加權總分 41.6，×0.975 續約折扣）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr style="background:#fffff0;"><td>工研院</td><td class="num">13</td><td class="num">19.1</td><td class="num">45.9%</td><td class="num"><strong>29,060</strong></td><td class="num">2,235</td></tr>
+        <tr><td>某大學</td><td class="num">9</td><td class="num">12.1</td><td class="num">29.1%</td><td class="num"><strong>18,410</strong></td><td class="num">2,046</td></tr>
+        <tr><td>NPE X</td><td class="num">8</td><td class="num">10.4</td><td class="num">25.0%</td><td class="num"><strong>15,823</strong></td><td class="num">1,978</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">41.6</td><td class="num">100%</td><td class="num">63,293</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">A 公司 — 供應商池 18,032 NTD（加權總分 47.4）</p>
+    <table>
+      <thead><tr><th>供應商</th><th>件數</th><th>加權分</th><th>佔比</th><th>分潤 (NTD)</th><th>每件平均</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td>工研院</td><td class="num">19</td><td class="num">30.5</td><td class="num">64.3%</td><td class="num"><strong>11,603</strong></td><td class="num">611</td></tr>
+        <tr><td>某大學</td><td class="num">7</td><td class="num">11.2</td><td class="num">23.6%</td><td class="num"><strong>4,261</strong></td><td class="num">609</td></tr>
+        <tr><td>NPE X</td><td class="num">4</td><td class="num">5.7</td><td class="num">12.0%</td><td class="num"><strong>2,168</strong></td><td class="num">542</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">30</td><td class="num">47.4</td><td class="num">100%</td><td class="num">18,032</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="note"><strong>每件平均分潤的巨大差異：</strong>同樣是工研院的專利，在 D 的訂閱中每件平均 6,097 元（3 年長約），但在 A 的訂閱中僅 611 元（3 個月短約）。<strong>長約客戶的價值是短約的 10 倍。</strong>這驅動供應商積極配合平台推動長期訂閱。</div>
+  </div>
+</div>
+
+<!-- ===== STEP 5: Licensor Grand Totals ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">5</span>各供應商總收益彙整 Licensor Grand Totals</div>
+  <div class="step-body">
+
+    <table>
+      <thead>
+        <tr><th>供應商</th><th>入池</th><th>唯一授權</th><th>from D</th><th>from B (3yr)</th><th>from C (2yr)</th><th>from A</th><th>總分潤</th><th>佔比</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight"><td><strong>工研院</strong></td><td class="num">500</td><td class="num">65</td><td class="num">128,051</td><td class="num">103,454</td><td class="num">58,865</td><td class="num">11,603</td><td class="num"><strong>301,973</strong></td><td class="num"><strong>58.1%</strong></td></tr>
+        <tr><td>某大學</td><td class="num">200</td><td class="num">25</td><td class="num">33,759</td><td class="num">52,791</td><td class="num">37,292</td><td class="num">4,261</td><td class="num"><strong>128,103</strong></td><td class="num"><strong>24.6%</strong></td></tr>
+        <tr><td>NPE X</td><td class="num">100</td><td class="num">20</td><td class="num">22,118</td><td class="num">33,634</td><td class="num">32,052</td><td class="num">2,168</td><td class="num"><strong>89,972</strong></td><td class="num"><strong>17.3%</strong></td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">800</td><td class="num">110</td><td class="num">183,928</td><td class="num">189,879</td><td class="num">128,209</td><td class="num">18,032</td><td class="num">520,048</td><td class="num">100%</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>B (3yr) = B Y1 + Y2 + Y3 三年續約合計</strong>（64,916 + 63,293 + 61,670），<strong>C (2yr) = C Y1 + Y2 兩年合計</strong>（64,916 + 63,293）。個別期別明細見 Step 4。</div>
+
+    <p class="section-label">每件專利的平均收益</p>
+    <table>
+      <thead><tr><th>供應商</th><th>唯一授權數</th><th>總分潤</th><th>每件唯一平均</th><th>入池總數</th><th>每件入池平均</th></tr></thead>
+      <tbody>
+        <tr><td>工研院</td><td class="num">65</td><td class="num">301,973</td><td class="num highlight"><strong>4,646</strong></td><td class="num">500</td><td class="num">604</td></tr>
+        <tr><td>某大學</td><td class="num">25</td><td class="num">128,103</td><td class="num highlight"><strong>5,124</strong></td><td class="num">200</td><td class="num">641</td></tr>
+        <tr><td>NPE X</td><td class="num">20</td><td class="num">89,972</td><td class="num highlight"><strong>4,499</strong></td><td class="num">100</td><td class="num">900</td></tr>
+      </tbody>
+    </table>
+
+    <div class="overlap-note">
+      <div><strong>續約效應大幅提升供應商收益：</strong>因 B 續約 3 年、C 續約 2 年，某大學每件唯一平均收益躍升至 5,124 元（最高），反映其在中長期客戶組合中的高選擇率。NPE X 的<strong>每件入池平均仍然最高</strong>（900 元 vs 工研院的 604 元），小池高命中的策略配合續約效應更加顯著。</div>
+    </div>
+
+    <p class="section-label">入池佔比 vs 分潤佔比 vs 效率分析</p>
+    <table>
+      <thead><tr><th>供應商</th><th>入池佔比</th><th>授權佔比</th><th>分潤佔比</th><th>分析</th></tr></thead>
+      <tbody>
+        <tr><td>工研院</td><td class="num">62.5%</td><td class="num">59.1%</td><td class="num highlight"><strong>58.1%</strong></td><td>分潤佔比略低於入池佔比；B/C 續約使中小供應商佔比提升</td></tr>
+        <tr><td>某大學</td><td class="num">25.0%</td><td class="num">22.7%</td><td class="num highlight"><strong>24.6%</strong></td><td>續約帶動分潤佔比接近入池佔比，B+C 貢獻穩定</td></tr>
+        <tr><td>NPE X</td><td class="num">12.5%</td><td class="num">18.2%</td><td class="num highlight"><strong>17.3%</strong></td><td>授權率最高(20%)，在 C 兩年份的選擇中持續受益</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== STEP 6: Overall Summary ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">6</span>全局收益總覽 Overall Summary</div>
+  <div class="step-body">
+
+    <div class="summary-box">
+      <h3>收益分配全景 — 全合約期間（含 B×3yr 續約 + C×2yr 續約）</h3>
+      <div class="summary-grid">
+        <div class="summary-item"><div class="label">總營收（含稅）</div><div class="value">856,548</div></div>
+        <div class="summary-item"><div class="label">營業稅 (÷1.05×5%)</div><div class="value">40,787</div></div>
+        <div class="summary-item"><div class="label">TIS 總收入</div><div class="value">295,713</div></div>
+        <div class="summary-item"><div class="label">供應商總分潤</div><div class="value">520,048</div></div>
+        <div class="summary-item"><div class="label">TIS 佔營收</div><div class="value">34.5%</div></div>
+        <div class="summary-item"><div class="label">供應商佔營收</div><div class="value">60.7%</div></div>
+      </div>
+    </div>
+
+    <div class="waterfall">
+      <div class="wf-row"><span class="wf-label">總營收（含稅）</span><div style="position:relative;flex:1;max-width:500px;height:26px;"><div class="wf-bar" style="position:absolute;left:0;width:100%;background:var(--gray-300);color:var(--gray-800);">100%</div></div><span class="wf-val">856,548</span></div>
+      <div class="wf-row"><span class="wf-label">營業稅 (÷1.05×5%)</span><div style="position:relative;flex:1;max-width:500px;height:26px;"><div class="wf-bar" style="position:absolute;left:0;width:4.76%;background:#fc8181;">4.8%</div></div><span class="wf-val">40,787</span></div>
+      <div class="wf-row"><span class="wf-label">TIS 平台費 15%</span><div style="position:relative;flex:1;max-width:500px;height:26px;"><div class="wf-bar" style="position:absolute;left:4.76%;width:14.29%;background:#4299e1;">14.3%</div></div><span class="wf-val">122,363</span></div>
+      <div class="wf-row"><span class="wf-label">TIS 池分成 25%</span><div style="position:relative;flex:1;max-width:500px;height:26px;"><div class="wf-bar" style="position:absolute;left:19.05%;width:20.24%;background:#2b6cb0;">20.2%</div></div><span class="wf-val">173,350</span></div>
+      <div class="wf-row"><span class="wf-label">供應商分潤 75%</span><div style="position:relative;flex:1;max-width:500px;height:26px;"><div class="wf-bar" style="position:absolute;left:39.29%;width:60.71%;background:#48bb78;">60.7%</div></div><span class="wf-val">520,048</span></div>
+    </div>
+
+    <p class="section-label">年度營收分佈</p>
+    <table>
+      <thead><tr><th>年度</th><th>D</th><th>B</th><th>C</th><th>A</th><th>合計</th><th>佔比</th></tr></thead>
+      <tbody>
+        <tr><td>Y1</td><td class="num">100,980</td><td class="num">80,190</td><td class="num">53,460</td><td class="num">29,700</td><td class="num"><strong>264,330</strong></td><td class="num">30.9%</td></tr>
+        <tr><td>Y2</td><td class="num">100,980</td><td class="num">104,915</td><td class="num">105,584</td><td class="num">—</td><td class="num"><strong>311,479</strong></td><td class="num">36.4%</td></tr>
+        <tr><td>Y3</td><td class="num">100,980</td><td class="num">102,242</td><td class="num">52,124</td><td class="num">—</td><td class="num"><strong>255,346</strong></td><td class="num">29.8%</td></tr>
+        <tr><td>Y4</td><td class="num">—</td><td class="num">25,394</td><td class="num">—</td><td class="num">—</td><td class="num"><strong>25,394</strong></td><td class="num">3.0%</td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">302,940</td><td class="num">312,741</td><td class="num">211,167</td><td class="num">29,700</td><td class="num">856,548</td><td class="num">100%</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><strong>續約效應：</strong>Y2 成為營收最高年度（311,479，佔 36.4%），因 B 和 C 同時在約且有全年覆蓋。相較無續約情境（546,480），總營收增長 <strong>56.7%</strong> 至 856,548，充分體現續約對平台收入的放大效果。</div>
+  </div>
+</div>
+
+<!-- ===== STEP 7: Key Mechanisms ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">7</span>機制重點整理 Key Mechanism Highlights</div>
+  <div class="step-body">
+    <table>
+      <thead><tr><th style="width:26%">機制</th><th>本例驗證</th></tr></thead>
+      <tbody>
+        <tr><td><strong>產業 SABCD 約束</strong></td><td>每個產業有固定的 SABCD 配比。D 和 A 同為半導體，加權總分皆為 47.4（3S/6A/8B/7C/6D），但各自從不同供應商選取。D 偏重工研院（21 件），A 稍分散（工研院:19, 某大學:7）。</td></tr>
+        <tr><td><strong>長約 = 10 倍價值</strong></td><td>D 的 3 年約中，工研院每件平均 6,098 元；A 的 3 月約中僅 611 元。差距約 10 倍。供應商有強動機推薦客戶選長約。</td></tr>
+        <tr><td><strong>續約 = 營收倍增引擎</strong></td><td>B 連續續約 3 年、C 續約 2 年，使總營收從 546,480 增至 856,548（+56.7%）。續約折扣（97.5%→95%）對營收影響溫和，但對客戶留存激勵顯著。</td></tr>
+        <tr><td><strong>同產業重疊 = 雙重收益</strong></td><td>v5 重疊僅限同產業 D∩A 共 10 件（工研院:4, 某大學:4, NPE X:2），這些專利從 D 和 A 的訂閱中各獲一次分潤。供應商提升同產業專利品質可增加「被多選」機率。</td></tr>
+        <tr><td><strong>SABCD 驅動品質溢價</strong></td><td>同為工研院，在 D 的組合中佔 69.6%（加權 33.0/47.4），在 C 的組合中僅 45.9%（19.1/41.6）。高品質產業 + 高評等專利 = 更大份額。</td></tr>
+        <tr><td><strong>小池高命中策略</strong></td><td>NPE X入池僅 100 件，但授權率最高（20%），每件入池平均 900 元（高於工研院的 604 和某大學的 641）。規模小但精準定位的供應商有生存空間。</td></tr>
+        <tr><td><strong>TIS 收入結構穩定</strong></td><td>無論供應商分配或續約狀態如何變化，TIS 固定拿 34.5%（平台費 + 池分成）。不參與供應商之間的分配風險。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== STEP 8: ITRI Quarterly Payout Schedule ===== -->
+<div class="step">
+  <div class="step-header"><span class="step-num">8</span>工研院季度分潤結算預估 ITRI Quarterly Payout Projection</div>
+  <div class="step-body">
+
+    <p>以下將 Step 4-5 的工研院分潤，按<strong>季度結算週期</strong>（每季末 3/6/9/12 月底撥付）逐季展開，呈現工研院在整個合約期間可預期的每季收入。此為工研院每季向 TIS 開立統一發票的依據。</p>
+
+    <div class="formula"><strong>發票稅額計算：</strong>TIS 撥付予工研院之分潤金額<strong>已含 5% 營業稅</strong>。工研院開立發票時：未稅金額 = 分潤 ÷ 1.05，營業稅 = 分潤 − 未稅金額（此稅額由工研院繳納國稅局）。</div>
+
+    <div class="summary-box" style="background: linear-gradient(135deg, #553c9a, #805ad5);">
+      <h3>工研院全期分潤全景 ITRI Total Payout Overview</h3>
+      <div class="summary-grid">
+        <div class="summary-item"><div class="label">全期發票總額（含稅）</div><div class="value">301,971</div></div>
+        <div class="summary-item"><div class="label">其中未稅金額</div><div class="value">287,591</div></div>
+        <div class="summary-item"><div class="label">其中營業稅（→國稅局）</div><div class="value">14,380</div></div>
+        <div class="summary-item"><div class="label">佔供應商總分潤</div><div class="value">58.1%</div></div>
+        <div class="summary-item"><div class="label">活躍季度數</div><div class="value">13 / 16</div></div>
+        <div class="summary-item"><div class="label">峰值季度</div><div class="value">Y1Q4: 38,567</div></div>
+      </div>
+    </div>
+
+    <p class="section-label">季度分潤明細表 Quarterly Payout Schedule</p>
+    <table>
+      <thead>
+        <tr><th>季度</th><th>活躍被授權人</th><th>平台營收<br>（含稅）</th><th>營業稅<br>(÷1.05×5%)</th><th>發票總額<br>（含稅）</th><th>其中未稅<br>(÷1.05)</th><th>其中營業稅<br>（→國稅局）</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-purple"><td><strong>Y1 Q1</strong></td><td>D</td><td class="num">25,245</td><td class="num">1,202</td><td class="num"><strong>10,671</strong></td><td class="num">10,163</td><td class="num">508</td></tr>
+        <tr class="highlight-purple"><td><strong>Y1 Q2</strong></td><td>D, B</td><td class="num">51,975</td><td class="num">2,475</td><td class="num"><strong>19,513</strong></td><td class="num">18,584</td><td class="num">929</td></tr>
+        <tr class="highlight-purple"><td><strong>Y1 Q3</strong></td><td>D, B, C</td><td class="num">78,705</td><td class="num">3,748</td><td class="num"><strong>26,964</strong></td><td class="num">25,680</td><td class="num">1,284</td></tr>
+        <tr style="background:#fed7e2;"><td><strong>Y1 Q4</strong></td><td>D, B, C, A</td><td class="num">108,405</td><td class="num">5,162</td><td class="num" style="color:#c53030;"><strong>38,567</strong></td><td class="num" style="color:#c53030;">36,730</td><td class="num">1,837</td></tr>
+        <tr style="background:var(--gray-100);"><td colspan="4" style="text-align:right;font-weight:700;">Y1 小計</td><td class="num"><strong>95,715</strong></td><td class="num"><strong>91,157</strong></td><td class="num"><strong>4,558</strong></td></tr>
+
+        <tr class="highlight-green"><td><strong>Y2 Q1</strong></td><td>D, B(Y1), C(Y1)</td><td class="num">78,705</td><td class="num">3,748</td><td class="num"><strong>26,964</strong></td><td class="num">25,680</td><td class="num">1,284</td></tr>
+        <tr class="highlight-green"><td><strong>Y2 Q2</strong></td><td>D, B(Y2續), C(Y1)</td><td class="num">78,036</td><td class="num">3,716</td><td class="num"><strong>26,743</strong></td><td class="num">25,470</td><td class="num">1,273</td></tr>
+        <tr class="highlight-green"><td><strong>Y2 Q3</strong></td><td>D, B(Y2續), C(Y2續)</td><td class="num">77,367</td><td class="num">3,684</td><td class="num"><strong>26,557</strong></td><td class="num">25,292</td><td class="num">1,265</td></tr>
+        <tr class="highlight-green"><td><strong>Y2 Q4</strong></td><td>D, B(Y2續), C(Y2續)</td><td class="num">77,367</td><td class="num">3,684</td><td class="num"><strong>26,557</strong></td><td class="num">25,292</td><td class="num">1,265</td></tr>
+        <tr style="background:var(--gray-100);"><td colspan="4" style="text-align:right;font-weight:700;">Y2 小計</td><td class="num"><strong>106,821</strong></td><td class="num"><strong>101,734</strong></td><td class="num"><strong>5,087</strong></td></tr>
+
+        <tr class="highlight-yellow"><td><strong>Y3 Q1</strong></td><td>D, B(Y2續), C(Y2續)</td><td class="num">77,367</td><td class="num">3,684</td><td class="num"><strong>26,557</strong></td><td class="num">25,292</td><td class="num">1,265</td></tr>
+        <tr class="highlight-yellow"><td><strong>Y3 Q2</strong></td><td>D, B(Y3續), C(Y2續)</td><td class="num">76,701</td><td class="num">3,652</td><td class="num"><strong>26,336</strong></td><td class="num">25,082</td><td class="num">1,254</td></tr>
+        <tr class="highlight-yellow"><td><strong>Y3 Q3</strong></td><td>D, B(Y3續)</td><td class="num">50,640</td><td class="num">2,411</td><td class="num"><strong>19,071</strong></td><td class="num">18,163</td><td class="num">908</td></tr>
+        <tr class="highlight-yellow"><td><strong>Y3 Q4</strong></td><td>D, B(Y3續)</td><td class="num">50,640</td><td class="num">2,411</td><td class="num"><strong>19,071</strong></td><td class="num">18,163</td><td class="num">908</td></tr>
+        <tr style="background:var(--gray-100);"><td colspan="4" style="text-align:right;font-weight:700;">Y3 小計</td><td class="num"><strong>91,035</strong></td><td class="num"><strong>86,700</strong></td><td class="num"><strong>4,335</strong></td></tr>
+
+        <tr class="highlight"><td><strong>Y4 Q1</strong></td><td>B(Y3續)</td><td class="num">25,395</td><td class="num">1,209</td><td class="num"><strong>8,400</strong></td><td class="num">8,000</td><td class="num">400</td></tr>
+        <tr style="color:var(--gray-300);"><td>Y4 Q2</td><td>—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr style="color:var(--gray-300);"><td>Y4 Q3</td><td>—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr style="color:var(--gray-300);"><td>Y4 Q4</td><td>—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr style="background:var(--gray-100);"><td colspan="4" style="text-align:right;font-weight:700;">Y4 小計</td><td class="num"><strong>8,400</strong></td><td class="num"><strong>8,000</strong></td><td class="num"><strong>400</strong></td></tr>
+
+        <tr class="total-row"><td colspan="4">全期合計 Grand Total</td><td class="num"><strong>301,971</strong></td><td class="num"><strong>287,591</strong></td><td class="num"><strong>14,380</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">季度分潤趨勢圖 ITRI Quarterly Payout Trend</p>
+    <div style="margin:16px 0;padding:4px 0;">
+      <div style="display:flex;align-items:flex-end;gap:4px;height:200px;padding-bottom:4px;border-bottom:2px solid var(--gray-300);">
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">10,671</span>
+          <div style="width:100%;background:#805ad5;border-radius:4px 4px 0 0;height:55px;" title="Y1Q1: 10,671"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q1</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">19,513</span>
+          <div style="width:100%;background:#805ad5;border-radius:4px 4px 0 0;height:101px;" title="Y1Q2: 19,513"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q2</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,964</span>
+          <div style="width:100%;background:#805ad5;border-radius:4px 4px 0 0;height:140px;" title="Y1Q3: 26,964"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q3</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:#c53030;font-weight:700;margin-bottom:2px;">38,567</span>
+          <div style="width:100%;background:#c53030;border-radius:4px 4px 0 0;height:200px;" title="Y1Q4: 38,567 (peak)"></div>
+          <span style="font-size:0.56rem;margin-top:4px;font-weight:700;color:#c53030;">Q4★</span>
+        </div>
+        <div style="width:2px;background:var(--gray-300);height:200px;flex-shrink:0;margin:0 2px;"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,964</span>
+          <div style="width:100%;background:#38a169;border-radius:4px 4px 0 0;height:140px;" title="Y2Q1: 26,964"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q5</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,743</span>
+          <div style="width:100%;background:#38a169;border-radius:4px 4px 0 0;height:139px;" title="Y2Q2: 26,743"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q6</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,557</span>
+          <div style="width:100%;background:#38a169;border-radius:4px 4px 0 0;height:138px;" title="Y2Q3: 26,557"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q7</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,557</span>
+          <div style="width:100%;background:#38a169;border-radius:4px 4px 0 0;height:138px;" title="Y2Q4: 26,557"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q8</span>
+        </div>
+        <div style="width:2px;background:var(--gray-300);height:200px;flex-shrink:0;margin:0 2px;"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,557</span>
+          <div style="width:100%;background:#d69e2e;border-radius:4px 4px 0 0;height:138px;" title="Y3Q1: 26,557"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q9</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">26,336</span>
+          <div style="width:100%;background:#d69e2e;border-radius:4px 4px 0 0;height:137px;" title="Y3Q2: 26,336"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q10</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">19,071</span>
+          <div style="width:100%;background:#d69e2e;border-radius:4px 4px 0 0;height:99px;" title="Y3Q3: 19,071"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q11</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">19,071</span>
+          <div style="width:100%;background:#d69e2e;border-radius:4px 4px 0 0;height:99px;" title="Y3Q4: 19,071"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q12</span>
+        </div>
+        <div style="width:2px;background:var(--gray-300);height:200px;flex-shrink:0;margin:0 2px;"></div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;">
+          <span style="font-size:0.6rem;color:var(--gray-600);margin-bottom:2px;">8,400</span>
+          <div style="width:100%;background:#3182ce;border-radius:4px 4px 0 0;height:44px;" title="Y4Q1: 8,400"></div>
+          <span style="font-size:0.56rem;margin-top:4px;">Q13</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:6px;">
+        <div style="flex:4;text-align:center;font-size:0.72rem;font-weight:700;color:#805ad5;border-top:3px solid #805ad5;padding-top:2px;">Y1 — 95,715</div>
+        <div style="flex:4;text-align:center;font-size:0.72rem;font-weight:700;color:#38a169;border-top:3px solid #38a169;padding-top:2px;">Y2 — 106,821 ★最高</div>
+        <div style="flex:4;text-align:center;font-size:0.72rem;font-weight:700;color:#d69e2e;border-top:3px solid #d69e2e;padding-top:2px;">Y3 — 91,035</div>
+        <div style="flex:1;text-align:center;font-size:0.72rem;font-weight:700;color:#3182ce;border-top:3px solid #3182ce;padding-top:2px;">Y4</div>
+      </div>
+    </div>
+
+    <p class="section-label">各來源被授權人貢獻佔工研院分潤之構成</p>
+    <table>
+      <thead>
+        <tr><th>年度</th><th>from D 公司<br>（半導體 3yr）</th><th>from B 公司<br>（光電 1yr×3）</th><th>from C 公司<br>（生技 1yr×2）</th><th>from A 公司<br>（半導體 3mo）</th><th>合計</th></tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-purple"><td><strong>Y1</strong></td><td class="num">42,684</td><td class="num">26,526</td><td class="num">14,902</td><td class="num">11,603</td><td class="num"><strong>95,715</strong></td></tr>
+        <tr class="highlight-green"><td><strong>Y2</strong></td><td class="num">42,684</td><td class="num">34,808</td><td class="num">29,329</td><td class="num">—</td><td class="num"><strong>106,821</strong></td></tr>
+        <tr class="highlight-yellow"><td><strong>Y3</strong></td><td class="num">42,684</td><td class="num">33,579</td><td class="num">14,772</td><td class="num">—</td><td class="num"><strong>91,035</strong></td></tr>
+        <tr class="highlight"><td><strong>Y4</strong></td><td class="num">—</td><td class="num">8,400</td><td class="num">—</td><td class="num">—</td><td class="num"><strong>8,400</strong></td></tr>
+        <tr class="total-row"><td>合計</td><td class="num">128,056</td><td class="num">103,313</td><td class="num">59,003</td><td class="num">11,603</td><td class="num"><strong>301,971</strong></td></tr>
+        <tr><td>佔比</td><td class="num"><strong>42.4%</strong></td><td class="num"><strong>34.2%</strong></td><td class="num"><strong>19.5%</strong></td><td class="num"><strong>3.8%</strong></td><td class="num">100%</td></tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">發票開立流程說明 Invoice Workflow</p>
+    <div class="rules-flow">
+      <div class="flow-step">
+        <div class="flow-icon" style="background:#805ad5;color:#fff;">1</div>
+        <div class="flow-text"><strong>TIS 出具結算報告</strong><br>每季末（3/6/9/12月底）<br><span class="flow-note">含分潤計算明細</span></div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon" style="background:#38a169;color:#fff;">2</div>
+        <div class="flow-text"><strong>工研院確認</strong><br>收到報告後 15 日內<br><span class="flow-note">核對加權分與金額</span></div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon" style="background:#d69e2e;color:#fff;">3</div>
+        <div class="flow-text"><strong>工研院開立發票</strong><br>分潤金額（含稅）÷1.05 = 未稅<br><span class="flow-note">統一發票予 TIS，稅額繳國稅局</span></div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-icon" style="background:#c53030;color:#fff;">4</div>
+        <div class="flow-text"><strong>TIS 匯款</strong><br>收到發票後 30 日內<br><span class="flow-note">匯入工研院指定帳戶</span></div>
+      </div>
+    </div>
+    <div class="formula">季度結算 → 報告出具 → 15日確認 → 開立發票 → 30日匯款 ｜ 從季末到入帳約 45-60 天<br>發票金額 = TIS 撥付之分潤（已含稅）｜ 未稅 = 發票金額 ÷ 1.05 ｜ 營業稅 = 發票金額 − 未稅（工研院繳國稅局）</div>
+
+    <div class="note"><strong>工研院收益關鍵洞察：</strong><br>
+    ① <strong>Y2 為收益最高年度</strong>（發票含稅 106,821，實際淨收 101,734）：B、C 同時續約帶動全年滿載。<br>
+    ② <strong>D 公司（3年長約）貢獻最大</strong>（128,056 含稅，佔 42.4%）：長約穩定性 + 半導體產業高加權（47.4）+ 工研院高佔比（69.6%）= 三重加乘效應。<br>
+    ③ <strong>被授權人數量直接驅動收入</strong>：峰值 Q4Y1（4家活躍）發票 38,567（淨收 36,730）；谷底 Q13（1家）僅 8,400（淨收 8,000），差距 4.6 倍。<br>
+    ④ <strong>續約降低波動</strong>：Y2 四季分潤維持 26,557~26,964 區間（振幅僅 1.5%），提供高度可預測的現金流。<br>
+    ⑤ <strong>零成本、零風險</strong>：工研院無需投入任何資源，入池專利的既有管理由 TIS 平台承擔，等於將「躺在倉庫」的閒置專利轉化為穩定季度收入。全期淨收入（未稅）<strong>287,591 元</strong>。</div>
+
+  </div>
+</div>
+
+</div>
+</body>
+</html>
