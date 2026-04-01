@@ -69,7 +69,8 @@ These are the core parameters shared across documents. When changing any of thes
 | Parameter | Value | Defined In |
 |:---|:---|:---|
 | Industry tiers | Premium / Pro / Plus (4-4-4 ranking by patent volume) | 商業討論 §7.2 |
-| MSRP monthly rates | Premium 9,900 / Pro 8,900 / Plus 7,900 NTD | 商業討論 §7.2 |
+| MSRP (per country) | US: 9,990/8,990/7,990; TW: 4,990/4,490/3,990; EP/JP: TBD | 商業討論 §7.2.1 |
+| Tier classification | Dual-track: Track A (patent pool volume) + Track B (export value) | 商業討論 §7.2.2 |
 | Period discounts | Short-term ×1.0 / Mid-term ×0.90 / Long-term ×0.85 | 商業討論 §7.3 |
 | Renewal discounts | 2nd term ×0.975 / 3rd+ term ×0.95 (cap) | 商業討論 §7.6 |
 | Revenue waterfall | Gross → 5% tax → 15% platform fee → pool (75% supplier / 25% TIS) | 商業討論 §6.1 |

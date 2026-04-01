@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TIS 授權平台收益分潤模擬 ver. 7.1.3</title>
+<title>TIS 授權平台收益分潤模擬 ver. 7.2.0</title>
 <!-- Version Control
+     ver. 7.2.0 | 2026-04-02 01:23 | Country-specific MSRP pricing + dual-track tier classification
      ver. 7.1.3 | 2026-03-28 19:48 | Update model-change banner from v6 to v7 (add SABCD + jurisdiction info)
      ver. 7.1.2 | 2026-03-28 19:34 | Fix incorrect timestamps (use actual Taipei time UTC+8)
      ver. 7.1.1 | 2026-03-28 19:30 | Fix Step 7 table text wrapping (nowrap causing right-edge overflow)
@@ -133,8 +134,8 @@
 <body>
 <div class="container">
 
-<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.1.3</h1>
-<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱 ｜ 最後更新：2026-03-28 19:48</p>
+<h1>TIS 專利授權平台 — 收益與分潤模擬 ver. 7.2.0</h1>
+<p class="subtitle">Renewal Scenario — B 公司續約 3 年 + C 公司續約 2 年 ｜ 初始 SABCD 5S/6A/9B/6C/4D ｜ 國家×產業訂閱（國家別 MSRP） ｜ 最後更新：2026-04-02 01:23</p>
 
 <div class="model-change"><strong>v7 模擬假設：</strong>續約情境 — <strong>B 公司連續續約 3 年</strong>（Y1 原價 → Y2 ×0.975 → Y3 ×0.95），<strong>C 公司續約 2 年</strong>（Y1 原價 → Y2 ×0.975，Y2 結束後退出）。續約折扣依 §7.6 規則（第 2 期 97.5 折、第 3 期+ 95 折）。收款方式維持短/中期全額一次、長期分兩期。分潤按季結算發放。初始 SABCD 統一配比 <strong>5S/6A/9B/6C/4D</strong>（加權 51.7），隨供應方加入各產業配比將動態演進。每份訂閱指定 <strong>1 國家（US/EP/JP/TW）× 1 產業 × 30 專利</strong>。</div>
 
@@ -144,17 +145,18 @@
   <div class="rules-body">
 
     <div class="rules-section">
-      <div class="rules-title">1. 產業分類與 MSRP 價格帶 Industry Categories &amp; MSRP</div>
-      <p>平台涵蓋 <strong>12 個產業</strong>，依 TIS 平台專利池中各產業專利數量排名（Patent Volume Ranking）均分為三個 MSRP 價格帶（每帶 4 個產業，2029 年底重新評估）：</p>
+      <div class="rules-title">1. 國家別 MSRP 價格帶 Country-Specific MSRP</div>
+      <p>每個國家設有獨立的三級 MSRP。各「國家×產業」組合透過<strong>雙軌評估</strong>（Track A 專利池數量 + Track B 出口貿易額）決定價格帶。若國家×產業細分數據不可取得，退回至產業彙總數據。</p>
       <table>
-        <thead><tr><th>價格帶</th><th>MSRP 月費</th><th>定義</th><th>涵蓋產業</th></tr></thead>
+        <thead><tr><th>國家</th><th style="text-align:center;">Premium</th><th style="text-align:center;">Pro</th><th style="text-align:center;">Plus</th></tr></thead>
         <tbody>
-          <tr style="background:#fff5f5;"><td><strong>Premium</strong></td><td class="num"><strong>9,900</strong></td><td>專利數量排名 Top 4</td><td>半導體/IC 設計、資通訊設備(ICT)、AI/軟體、電子零組件</td></tr>
-          <tr style="background:#fffff0;"><td><strong>Pro</strong></td><td class="num"><strong>8,900</strong></td><td>專利數量排名第 5–8</td><td>光電/面板、汽車零組件、生技醫療/醫材、綠能/儲能</td></tr>
-          <tr style="background:#f0fff4;"><td><strong>Plus</strong></td><td class="num"><strong>7,900</strong></td><td>專利數量排名第 9–12</td><td>機械設備、石化/塑橡膠、金屬製品、紡織/機能布料</td></tr>
+          <tr style="background:#fff5f5;"><td><strong>美國（US）</strong></td><td class="num"><strong>9,990</strong></td><td class="num"><strong>8,990</strong></td><td class="num"><strong>7,990</strong></td></tr>
+          <tr style="background:#fffff0;"><td><strong>歐洲（EP）</strong></td><td class="num" style="color:var(--gray-300);">待定</td><td class="num" style="color:var(--gray-300);">待定</td><td class="num" style="color:var(--gray-300);">待定</td></tr>
+          <tr style="background:#ebf4ff;"><td><strong>日本（JP）</strong></td><td class="num" style="color:var(--gray-300);">待定</td><td class="num" style="color:var(--gray-300);">待定</td><td class="num" style="color:var(--gray-300);">待定</td></tr>
+          <tr style="background:#f0fff4;"><td><strong>台灣（TW）</strong></td><td class="num"><strong>4,990</strong></td><td class="num"><strong>4,490</strong></td><td class="num"><strong>3,990</strong></td></tr>
         </tbody>
       </table>
-      <div class="formula">MSRP 可依市場供需定期調整（調整前 60 天公告）。所有折扣均以訂閱當時的 MSRP 為基準計算。</div>
+      <div class="formula">雙軌分級：Track A（專利池數量）+ Track B（出口貿易額）→ 平均排名 → Top 1/3 Premium / Mid 1/3 Pro / Bottom 1/3 Plus ｜ MSRP 可依市場供需定期調整（調整前 60 天公告）</div>
     </div>
 
     <div class="rules-section">
