@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIS 專利授權平台 — 投資人簡報</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2d5f8a;
+  --primary-dark: #0f1f33;
+  --accent: #3b82f6;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --green: #22c55e;
+  --yellow: #eab308;
+  --orange: #f97316;
+  --red: #ef4444;
+  --green-bg: #f0fdf4;
+  --yellow-bg: #fefce8;
+  --orange-bg: #fff7ed;
+  --red-bg: #fef2f2;
+  --gold: #d4a843;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+  background: var(--bg); color: var(--text);
+  line-height: 1.7; font-size: 15px;
+}
+.layout { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  width: 260px; position: fixed; top:0; left:0; bottom:0;
+  background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+  color: #fff; padding: 20px 14px; overflow-y: auto; z-index: 100;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+.sidebar .logo { font-size: 18px; font-weight: 700; margin-bottom: 4px; letter-spacing: 1px; }
+.sidebar .logo-sub { font-size: 11px; opacity: 0.6; margin-bottom: 20px; display: block; }
+.sidebar .nav-group { margin-bottom: 12px; }
+.sidebar .nav-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 2px;
+  opacity: 0.4; margin-bottom: 4px; padding-left: 12px;
+}
+.sidebar a {
+  display: block; padding: 6px 12px; color: rgba(255,255,255,0.7);
+  text-decoration: none; font-size: 13px; border-radius: 6px;
+  margin-bottom: 1px; transition: all 0.2s;
+}
+.sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.12); color: #fff; }
+.sidebar a.sub { padding-left: 24px; font-size: 12px; opacity: 0.85; }
+
+/* Main */
+.main { margin-left: 260px; flex:1; }
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 40%, var(--primary-light) 100%);
+  color: #fff; padding: 80px 60px 60px; position: relative; overflow: hidden;
+}
+.hero::after {
+  content: ''; position: absolute; top:-50%; right:-20%; width: 600px; height: 600px;
+  border-radius: 50%; background: rgba(255,255,255,0.03);
+}
+.hero-badge { font-size: 11px; background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 20px; letter-spacing: 1px; display: inline-block; margin-bottom: 16px; }
+.hero h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+.hero h1 .accent { color: var(--gold); }
+.hero p.subtitle { font-size: 18px; opacity: 0.85; max-width: 650px; line-height: 1.6; }
+.hero .meta { margin-top: 24px; font-size: 13px; opacity: 0.5; }
+
+/* Content */
+.content { padding: 40px 60px 80px; max-width: 1200px; }
+.section { margin-bottom: 56px; scroll-margin-top: 20px; }
+.section-num { font-size: 12px; color: var(--primary-light); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+.section-title {
+  font-size: 24px; font-weight: 700; color: var(--primary);
+  padding-bottom: 12px; border-bottom: 3px solid var(--primary);
+  margin-bottom: 24px;
+}
+.subsection-title {
+  font-size: 18px; font-weight: 600; color: var(--primary);
+  margin: 28px 0 14px; padding-left: 14px;
+  border-left: 4px solid var(--accent);
+}
+
+/* Cards */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card-grid { display: grid; gap: 20px; }
+.card-grid-2 { grid-template-columns: 1fr 1fr; }
+.card-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+/* Stat cards */
+.stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 24px; text-align: center;
+}
+.stat-card .stat-num { font-size: 36px; font-weight: 800; color: var(--primary); }
+.stat-card .stat-unit { font-size: 14px; color: var(--text-muted); }
+.stat-card .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* Feature cards */
+.feature-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 28px; transition: transform 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.feature-card .icon { font-size: 28px; margin-bottom: 12px; }
+.feature-card h3 { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* Pillar card */
+.pillar-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; cursor: pointer; transition: all 0.2s;
+}
+.pillar-card:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(59,130,246,0.1); }
+.pillar-card .pillar-id { font-size: 12px; color: var(--primary-light); font-weight: 700; }
+.pillar-card .pillar-name { font-size: 16px; font-weight: 700; color: var(--primary); margin: 4px 0; }
+.pillar-card .pillar-en { font-size: 12px; color: var(--text-muted); }
+.pillar-card .pillar-count { font-size: 11px; color: var(--accent); margin-top: 8px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: #f1f5f9; padding: 10px 12px; text-align: left; font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--border); }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+tr:hover { background: #f8fafc; }
+
+/* Progress bars */
+.pctl-bar { height: 8px; border-radius: 4px; background: #e2e8f0; position: relative; min-width: 80px; }
+.pctl-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.pctl-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.pctl-tag-green { background: var(--green-bg); color: #166534; }
+.pctl-tag-yellow { background: var(--yellow-bg); color: #854d0e; }
+.pctl-tag-orange { background: var(--orange-bg); color: #9a3412; }
+.pctl-tag-red { background: var(--red-bg); color: #991b1b; }
+
+/* Insight box */
+.insight {
+  background: #f0f4ff; border-left: 4px solid var(--primary-light);
+  padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0;
+  font-size: 14px; line-height: 1.7;
+}
+.insight strong { color: var(--primary); }
+.insight ul { margin-top: 8px; padding-left: 20px; }
+.insight li { margin-bottom: 4px; }
+
+/* Flow diagram */
+.flow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin: 24px 0; }
+.flow-box {
+  background: var(--primary); color: #fff; padding: 12px 20px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; text-align: center; min-width: 120px;
+}
+.flow-box.light { background: var(--primary-light); }
+.flow-box.accent { background: var(--accent); }
+.flow-box.gold { background: var(--gold); color: var(--primary-dark); }
+.flow-arrow { font-size: 20px; color: var(--text-muted); }
+
+/* Risk badge */
+.risk-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.risk-very-low { background: #dcfce7; color: #166534; }
+.risk-low { background: #fef9c3; color: #854d0e; }
+.risk-medium { background: #ffedd5; color: #9a3412; }
+
+/* Collapsible details */
+details { margin-bottom: 12px; }
+details summary {
+  cursor: pointer; font-weight: 600; color: var(--primary); padding: 12px 16px;
+  background: #f1f5f9; border-radius: 8px; list-style: none; user-select: none;
+  transition: background 0.2s;
+}
+details summary:hover { background: #e2e8f0; }
+details summary::before { content: '▸ '; transition: transform 0.2s; }
+details[open] summary::before { content: '▾ '; }
+details[open] summary { border-radius: 8px 8px 0 0; }
+details .detail-content { padding: 16px; border: 1px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; }
+
+/* Chart container */
+.chart-container { width: 100%; height: 420px; }
+.chart-sm { height: 320px; }
+.chart-lg { height: 500px; }
+
+/* Divider */
+.divider { height: 1px; background: var(--border); margin: 40px 0; }
+
+/* Big number */
+.big-num { font-size: 64px; font-weight: 800; color: var(--primary); line-height: 1; }
+.big-num .unit { font-size: 24px; font-weight: 600; }
+
+/* Highlight box */
+.highlight-box {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff; padding: 32px; border-radius: 12px; margin: 20px 0;
+}
+.highlight-box h3 { font-size: 20px; margin-bottom: 12px; }
+.highlight-box p { opacity: 0.9; line-height: 1.7; }
+
+/* Footer */
+.footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border); margin-top: 48px; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .hero { padding: 40px 24px 32px; }
+  .hero h1 { font-size: 28px; }
+  .content { padding: 20px; }
+  .card-grid-2, .card-grid-3, .card-grid-4 { grid-template-columns: 1fr; }
+  .flow { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); }
+}
+
+/* Indicator row - compact for pillar detail */
+.ind-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.ind-row:last-child { border-bottom: none; }
+.ind-code { font-weight: 700; color: var(--primary); min-width: 40px; }
+.ind-name { flex: 1; }
+.ind-pctl { min-width: 60px; text-align: right; }
+.ind-bar { width: 100px; }
+.ind-weight { min-width: 40px; text-align: right; color: var(--text-muted); font-size: 12px; }
+
+/* Comparison table special */
+.cmp-met { color: var(--green); font-weight: 700; }
+.cmp-partial { color: var(--yellow); font-weight: 700; }
+.cmp-not { color: var(--red); font-weight: 700; }
+
+/* Waterfall styling for revenue */
+.wf-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.wf-label { min-width: 160px; font-size: 14px; }
+.wf-bar-wrap { flex: 1; height: 24px; background: #f1f5f9; border-radius: 4px; position: relative; }
+.wf-bar { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 11px; color: #fff; font-weight: 600; }
+.wf-pct { min-width: 60px; text-align: right; font-size: 13px; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar">
+  <div class="logo">TIS 專利授權平台</div>
+  <span class="logo-sub">投資人簡報 2026</span>
+
+  <div class="nav-group">
+    <div class="nav-label">概覽</div>
+    <a href="#cover">封面</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">市場與產品</div>
+    <a href="#sec-pain">市場痛點</a>
+    <a href="#sec-limit">現有方法侷限</a>
+    <a href="#sec-overview">平台總覽</a>
+    <a href="#sec-value">核心價值主張</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">PSS 框架</div>
+    <a href="#sec-arch">架構總覽</a>
+    <a href="#sec-pillars">八支柱速覽</a>
+    <a href="#sec-p1" class="sub">P1 書目計量</a>
+    <a href="#sec-p2" class="sub">P2 法律強度</a>
+    <a href="#sec-p3" class="sub">P3 技術價值</a>
+    <a href="#sec-p4" class="sub">P4 市場覆蓋</a>
+    <a href="#sec-p5" class="sub">P5 文本品質</a>
+    <a href="#sec-p6" class="sub">P6 網路中心性</a>
+    <a href="#sec-p7" class="sub">P7 授權潛力</a>
+    <a href="#sec-p8" class="sub">P8 前瞻價值</a>
+    <a href="#sec-scoring">計分方法論</a>
+    <a href="#sec-indicators">指標分類</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">案例展示</div>
+    <a href="#sec-case-intro">案例引言</a>
+    <a href="#sec-case-pss">PSS 總覽</a>
+    <a href="#sec-case-stability">五方案穩定性</a>
+    <a href="#sec-case-detail">支柱深度數據</a>
+    <a href="#sec-case-top">強項 Top 10</a>
+    <a href="#sec-case-bottom">弱項 Bottom 10</a>
+    <a href="#sec-case-conclusion">綜合評估</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">FTO 分析</div>
+    <a href="#sec-fto-flow">FTO 流程</a>
+    <a href="#sec-fto-result">比對結果</a>
+    <a href="#sec-fto-diff">技術差異</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">分潤系統</div>
+    <a href="#sec-revenue">收益分潤模型</a>
+    <a href="#sec-rating">SABCD 評級</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">附錄</div>
+    <a href="#sec-appendix-ind">完整指標清單</a>
+    <a href="#sec-appendix-fto">FTO Claim Chart</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<!-- ═══════════════ HERO / COVER ═══════════════ -->
+<div class="hero" id="cover">
+  <div class="hero-badge">投資人簡報 ｜ 2026 年 4 月</div>
+  <h1>TIS <span class="accent">專利授權平台</span><br>多維度 AI 驅動的專利價值評估</h1>
+  <p class="subtitle">整合 Patent Strength Score (PSS) 評分引擎、FTO 侵權比對分析與智慧分潤系統，為專利授權生態系提供端到端的量化解決方案。</p>
+  <div class="meta">TIS Patent Licensing Platform ｜ Confidential</div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════ PART 1: 市場機會 ═══════════════ -->
+
+<!-- 市場痛點 -->
+<div class="section" id="sec-pain">
+  <div class="section-num">Part 1 — 市場機會</div>
+  <div class="section-title">專利授權市場的評價困境</div>
+
+  <div class="card-grid card-grid-3" style="margin-bottom:24px;">
+    <div class="stat-card">
+      <div class="stat-num">數百億<span class="stat-unit"> 美元</span></div>
+      <div class="stat-label">全球專利授權市場年交易規模</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">數週~數月</div>
+      <div class="stat-label">傳統專利價值鑑定所需時間</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">數十萬<span class="stat-unit"> 美元</span></div>
+      <div class="stat-label">單次人工鑑定報告成本</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p>全球專利授權市場涉及從半導體、通訊到生技醫藥的各個技術領域。然而，專利缺乏公開、透明且持續更新的定價機制，市場參與者長期在<strong>資訊不對稱</strong>的環境中做出重大商業決策。</p>
+    <br>
+    <p>傳統的專利價值評估高度依賴人工專家判斷——技術專家、專利律師與商業分析師的協同作業，不僅耗時耗資，更關鍵的問題在於<strong>可複製性</strong>：不同評估機構對同一件專利的價值判斷可能出現顯著差異，淪為「專家對專家」的攻防。</p>
+    <br>
+    <p>在大規模組合交易中，逐件人工鑑定在經濟上不可行，潛在的高價值資產可能被忽視，低價值專利的虛高計數則可能誤導決策。</p>
+  </div>
+</div>
+
+<!-- 現有方法侷限 -->
+<div class="section" id="sec-limit">
+  <div class="section-title">現有方法的侷限</div>
+
+  <div class="card-grid card-grid-2">
+    <div class="card">
+      <h3 style="color:var(--primary); margin-bottom:12px;">引用計數法的盲區</h3>
+      <ul style="padding-left:20px; color:var(--text-muted); line-height:2;">
+        <li><strong>年齡偏差</strong>：較早公開的專利有更長的引用累積時間</li>
+        <li><strong>無法區分引用品質</strong>：審查員添加 vs 申請人自行引用</li>
+        <li><strong>單一維度</strong>：完全忽略法律狀態、請求項品質、市場佈局</li>
+        <li><strong>無法規模化深度分析</strong>：只統計數量，缺乏語意理解</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--primary); margin-bottom:12px;">法律分析法的瓶頸</h3>
+      <ul style="padding-left:20px; color:var(--text-muted); line-height:2;">
+        <li><strong>極高人力成本</strong>：需資深專利律師逐件審閱</li>
+        <li><strong>無法規模化</strong>：數千件專利組合無法逐件鑑定</li>
+        <li><strong>偏重防禦性</strong>：較少量化進攻性授權潛力</li>
+        <li><strong>主觀偏差</strong>：分析師背景與經驗影響結論</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="margin-top:24px;">
+    <h3>市場需要什麼？</h3>
+    <p>一個能整合<strong>結構化數據分析</strong>與<strong>AI 語意理解能力</strong>的多維度框架——既能大規模、可複製地處理專利組合，又不犧牲對技術內涵與文本品質的深度評估。</p>
+  </div>
+</div>
+
+<!-- ═══════════════ PART 2: 產品解決方案 ═══════════════ -->
+
+<!-- 平台總覽 -->
+<div class="section" id="sec-overview">
+  <div class="section-num">Part 2 — 產品解決方案</div>
+  <div class="section-title">TIS 平台一頁式總覽</div>
+
+  <div class="card-grid card-grid-3">
+    <div class="feature-card">
+      <div class="icon">📊</div>
+      <h3>PSS 評分引擎</h3>
+      <p>8 大支柱、50 項量化指標，結合結構化數據與 NLP 增強分析，為每件專利產出 0-100 分的綜合強度評分。</p>
+      <div style="margin-top:12px; font-size:13px; color:var(--accent);">數小時完成數千件專利全維度評分</div>
+    </div>
+    <div class="feature-card">
+      <div class="icon">🔍</div>
+      <h3>FTO 侵權比對分析</h3>
+      <p>AI 驅動的候選池篩選 + 相似度評分 + 逐 Claim 全要件比對 + 均等論分析，產出完整 FTO 報告。</p>
+      <div style="margin-top:12px; font-size:13px; color:var(--accent);">自動化 Claim Chart 生成</div>
+    </div>
+    <div class="feature-card">
+      <div class="icon">💰</div>
+      <h3>收益分潤系統</h3>
+      <p>SABCD 評級 × PSS 加權的智慧分潤機制，收益瀑布圖透明呈現每一筆資金流向。</p>
+      <div style="margin-top:12px; font-size:13px; color:var(--accent);">多方利益相關者的公平分配</div>
+    </div>
+  </div>
+
+  <div class="flow" style="margin-top:32px;">
+    <div class="flow-box">專利資料庫</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box light">PSS 評分引擎</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box accent">FTO 比對分析</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box gold">授權談判 + 分潤</div>
+  </div>
+</div>
+
+<!-- 核心價值主張 -->
+<div class="section" id="sec-value">
+  <div class="section-title">核心價值主張</div>
+  <div class="card-grid card-grid-4">
+    <div class="feature-card" style="border-top: 3px solid var(--accent);">
+      <h3>可複製性</h3>
+      <p>相同專利、相同比較池，任何時間產出相同分數，排除人為主觀判斷的干擾。</p>
+    </div>
+    <div class="feature-card" style="border-top: 3px solid var(--green);">
+      <h3>多維度整合</h3>
+      <p>從引用計量到前瞻趨勢，八個支柱相互獨立又彼此互補，一次涵蓋所有關鍵面向。</p>
+    </div>
+    <div class="feature-card" style="border-top: 3px solid var(--gold);">
+      <h3>可解釋性</h3>
+      <p>總分可逐層拆解至支柱分數與個別指標，每一項分數都有明確的計算邏輯與數據來源。</p>
+    </div>
+    <div class="feature-card" style="border-top: 3px solid var(--orange);">
+      <h3>公平比較</h3>
+      <p>池內百分位排序，在同一技術領域內建立相對排名，避免跨領域的不當比較。</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PART 3: PSS 框架 ═══════════════ -->
+
+<!-- 架構總覽 -->
+<div class="section" id="sec-arch">
+  <div class="section-num">Part 3 — PSS 框架深度介紹</div>
+  <div class="section-title">PSS 架構總覽</div>
+
+  <div class="card">
+    <h3 style="color:var(--primary); margin-bottom:16px;">三層聚合架構</h3>
+    <div class="flow">
+      <div class="flow-box" style="min-width:200px;">50 項指標<br><small>原始值計算 + 正規化</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box light" style="min-width:200px;">8 個支柱<br><small>加權平均聚合</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box accent" style="min-width:200px;">PSS 總分<br><small>0-100 分</small></div>
+    </div>
+    <div style="margin-top:24px;">
+      <h3 style="color:var(--primary); margin-bottom:12px;">四大設計原則</h3>
+      <table>
+        <tr><th style="width:140px;">原則</th><th>說明</th></tr>
+        <tr><td><strong>獨立可拆</strong></td><td>每項指標獨立計算、獨立計分，支柱與指標可依溝通需求自由組合展示</td></tr>
+        <tr><td><strong>池內正規化</strong></td><td>所有指標分數透過池內百分位排序產生，不進行跨池比較</td></tr>
+        <tr><td><strong>可配權重</strong></td><td>八個支柱的權重可依評估場景靈活調整（授權導向 / 訴訟強度 / 投資併購 / 技術佈局）</td></tr>
+        <tr><td><strong>高度可解釋</strong></td><td>從總分到支柱到指標，每一個分數都可追溯至原始數據</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 八支柱速覽 -->
+<div class="section" id="sec-pillars">
+  <div class="section-title">八支柱速覽</div>
+  <div class="card" style="margin-bottom:24px;">
+    <div id="pillar-radar-overview" class="chart-container"></div>
+  </div>
+  <div class="card-grid card-grid-4">
+    <div class="pillar-card"><div class="pillar-id">P1</div><div class="pillar-name">書目計量</div><div class="pillar-en">Citation Impact</div><div class="pillar-count">7 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P2</div><div class="pillar-name">法律強度</div><div class="pillar-en">Legal Strength</div><div class="pillar-count">8 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P3</div><div class="pillar-name">技術價值</div><div class="pillar-en">Technical Value</div><div class="pillar-count">7 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P4</div><div class="pillar-name">市場覆蓋</div><div class="pillar-en">Market Coverage</div><div class="pillar-count">5 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P5</div><div class="pillar-name">文本品質</div><div class="pillar-en">Text Quality</div><div class="pillar-count">8 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P6</div><div class="pillar-name">網路中心性</div><div class="pillar-en">Network Centrality</div><div class="pillar-count">4 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P7</div><div class="pillar-name">授權潛力</div><div class="pillar-en">Licensing Potential</div><div class="pillar-count">6 項指標</div></div>
+    <div class="pillar-card"><div class="pillar-id">P8</div><div class="pillar-name">前瞻價值</div><div class="pillar-en">Forward-Looking Value</div><div class="pillar-count">5 項指標</div></div>
+  </div>
+</div>
+
+<!-- P1-P8 各支柱 -->
+<div class="section" id="sec-p1">
+  <div class="subsection-title">P1 書目計量 Citation Impact</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">引用計量是專利計量學中歷史最悠久的影響力衡量方法。P1 從<strong>量、速度、品質、結構</strong>四個維度全方位衡量引用影響力。</p>
+    <div class="ind-row"><span class="ind-code">P1.1</span><span class="ind-name"><strong>前向引用數</strong> — 被多少後續專利引用，最基礎的影響力指標</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P1.2</span><span class="ind-name"><strong>引用速度</strong> — 年均被引次數，消除年齡偏差，識別「成長型資產」</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P1.3</span><span class="ind-name"><strong>通用性指數</strong> — 引用者的技術多樣性 (IPC 分布)</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P1.4</span><span class="ind-name"><strong>原創性指數</strong> — 被引文獻的技術多樣性，反映技術融合程度</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P1.5</span><span class="ind-name"><strong>顛覆性指數 (CD Index)</strong> — 區分顛覆型與鞏固型技術貢獻</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P1.6</span><span class="ind-name"><strong>後向引用數</strong> — 先前技術檢索廣度的輔助指標</span><span class="ind-weight">5%</span></div>
+    <div class="ind-row"><span class="ind-code">P1.7</span><span class="ind-name"><strong>審查員引用率</strong> — 審查員主動添加的引用比例，技術阻斷力信號</span><span class="ind-weight">20%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p2">
+  <div class="subsection-title">P2 法律強度 Legal Strength</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">法律強度是被授權方最先檢視、最直接影響談判走向的面向。P2 從<strong>保護範圍、存續穩定、審查品質</strong>三個面向評估。</p>
+    <div class="ind-row"><span class="ind-code">P2.1</span><span class="ind-name"><strong>專利家族規模</strong> — 同一發明在多少國家取得保護</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.2</span><span class="ind-name"><strong>請求項數量</strong> — 保護面向與防禦層次</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.3</span><span class="ind-name"><strong>獨立請求項數量</strong> — 獨立的侵權主張基礎數量</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.4</span><span class="ind-name"><strong>法律狀態</strong> — 門檻指標，必須為有效狀態</span><span class="ind-weight">0%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.5</span><span class="ind-name"><strong>剩餘專利年限</strong> — 可收取授權金的時間窗口</span><span class="ind-weight">25%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.6</span><span class="ind-name"><strong>維護費狀態</strong> — 權利人對商業價值的信心信號</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.7</span><span class="ind-name"><strong>接續/分割申請</strong> — 專利叢林效應的基礎</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P2.8</span><span class="ind-name"><strong>審查歷程強度</strong> — 通過嚴格審查考驗的程度</span><span class="ind-weight">20%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p3">
+  <div class="subsection-title">P3 技術價值 Technical Value</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">技術價值是專利從「紙上權利」轉化為「實質資產」的技術基礎。P3 採用<strong>結構化數據 + NLP 增強分析</strong>的混合方法。</p>
+    <div class="ind-row"><span class="ind-code">P3.1</span><span class="ind-name"><strong>IPC 分類廣度</strong> — 涵蓋的技術領域數量</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P3.2</span><span class="ind-name"><strong>技術融合指數</strong> — IPC 分類組合的稀有程度</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P3.3</span><span class="ind-name"><strong>發明人團隊規模</strong> — 技術複雜度的間接指標</span><span class="ind-weight">5%</span></div>
+    <div class="ind-row"><span class="ind-code">P3.4</span><span class="ind-name"><strong>說明書深度</strong> — 技術揭露的詳盡程度</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P3.5</span><span class="ind-name"><strong>技術新穎性評估</strong> <span style="color:var(--accent);">[NLP]</span> — 語意層面的創新深度</span><span class="ind-weight">30%</span></div>
+    <div class="ind-row"><span class="ind-code">P3.6</span><span class="ind-name"><strong>發明層級分類</strong> <span style="color:var(--accent);">[NLP]</span> — TRIZ 五級創新層級</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P3.7</span><span class="ind-name"><strong>SEP 必要性</strong> — 標準必要專利特殊地位（選用）</span><span class="ind-weight">10%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p4">
+  <div class="subsection-title">P4 市場覆蓋 Market Coverage</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">專利的地理覆蓋範圍直接決定授權收益的天花板。P4 以<strong>經濟價值加權</strong>的方式衡量地理佈局強度。</p>
+    <div class="ind-row"><span class="ind-code">P4.1</span><span class="ind-name"><strong>家族地理廣度</strong> — 涵蓋的不重複國家數量</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P4.2</span><span class="ind-name"><strong>GDP 加權市場覆蓋</strong> — 以各國 GDP 加權的覆蓋率</span><span class="ind-weight">30%</span></div>
+    <div class="ind-row"><span class="ind-code">P4.3</span><span class="ind-name"><strong>三方專利指標</strong> — 是否同時在 US/EP/JP 取得授權</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P4.4</span><span class="ind-name"><strong>關鍵市場命中率</strong> — US/CN/EP/JP/KR 五大市場覆蓋率</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P4.5</span><span class="ind-name"><strong>新興市場佈局</strong> — 新興經濟體的前瞻性佈局</span><span class="ind-weight">15%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p5">
+  <div class="subsection-title">P5 文本品質 Text Quality <span style="color:var(--accent); font-size:14px;">[全 NLP 驅動]</span></div>
+  <div class="card">
+    <p style="margin-bottom:16px;">P5 是 PSS 框架中<strong>最具差異化</strong>的支柱。過去只有資深專利律師才能進行的文本品質審查，首次實現了規模化的系統性評估。</p>
+    <div class="ind-row"><span class="ind-code">P5.1</span><span class="ind-name"><strong>請求項明確性</strong> — 用語清晰度與法律確定性</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.2</span><span class="ind-name"><strong>說明書支撐度</strong> — 對每個請求項元素的實施支撐程度</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.3</span><span class="ind-name"><strong>功能性語言比例</strong> — means-plus-function 用語程度</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.4</span><span class="ind-name"><strong>多重附屬效率</strong> — 附屬項層次架構與保護效率</span><span class="ind-weight">8%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.5</span><span class="ind-name"><strong>請求項範圍寬度</strong> — 獨立項保護範圍的廣度</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.6</span><span class="ind-name"><strong>請求項層次結構完整性</strong> — 防禦縱深 (Defense in Depth)</span><span class="ind-weight">12%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.7</span><span class="ind-name"><strong>多語言一致性</strong> — 跨國版本請求項語意一致性（選用）</span><span class="ind-weight">10%</span></div>
+    <div class="ind-row"><span class="ind-code">P5.8</span><span class="ind-name"><strong>說明書品質綜合</strong> — 法規合規 × 技術連貫 × 圖文一致</span><span class="ind-weight">15%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p6">
+  <div class="subsection-title">P6 網路中心性 Network Centrality</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">將 Google PageRank 的網路分析方法論移植到專利引用圖譜中，讓每件專利的「<strong>網路位置</strong>」成為可量化的評估維度。不只看「被引用多少次」，更看「被誰引用」。</p>
+    <div class="ind-row"><span class="ind-code">P6.1</span><span class="ind-name"><strong>PageRank 中心性</strong> — 被重要專利引用的遞迴重要性</span><span class="ind-weight">25%</span></div>
+    <div class="ind-row"><span class="ind-code">P6.2</span><span class="ind-name"><strong>中介中心性</strong> — 作為「技術交通樞紐」的程度</span><span class="ind-weight">25%</span></div>
+    <div class="ind-row"><span class="ind-code">P6.3</span><span class="ind-name"><strong>Hub/Authority 分數</strong> — HITS 演算法的權威/樞紐角色分類</span><span class="ind-weight">25%</span></div>
+    <div class="ind-row"><span class="ind-code">P6.4</span><span class="ind-name"><strong>社群橋接位置</strong> — 跨越不同技術社群的連結數量</span><span class="ind-weight">25%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p7">
+  <div class="subsection-title">P7 授權潛力 Licensing Potential</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">P7 直接聚焦「<strong>這件專利能不能賺到錢</strong>」——從品質到價值的轉化鏈條。</p>
+    <div class="ind-row"><span class="ind-code">P7.1</span><span class="ind-name"><strong>侵權可偵測性</strong> <span style="color:var(--accent);">[NLP]</span> — 侵權行為能否從外部觀察與舉證</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P7.2</span><span class="ind-name"><strong>迴避設計難度</strong> <span style="color:var(--accent);">[NLP]</span> — 競爭者能否透過替代方案繞過</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P7.3</span><span class="ind-name"><strong>損害賠償基礎</strong> <span style="color:var(--accent);">[NLP]</span> — 技術與產品功能/價值的關聯程度</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P7.4</span><span class="ind-name"><strong>授權歷史信號</strong> <span style="color:var(--accent);">[NLP]</span> — 所在技術領域的授權市場成熟度</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P7.5</span><span class="ind-name"><strong>專利叢林密度</strong> — 所在領域的專利密集程度</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P7.6</span><span class="ind-name"><strong>阻斷位置指數</strong> — 跨支柱衍生指標 (P1.7×0.6 + P6.2×0.4)</span><span class="ind-weight">15%</span></div>
+  </div>
+</div>
+
+<div class="section" id="sec-p8">
+  <div class="subsection-title">P8 前瞻價值 Forward-Looking Value</div>
+  <div class="card">
+    <p style="margin-bottom:16px;">授權合約的本質是對<strong>未來價值</strong>的定價。P8 將評估的時間軸從「現在」延伸到「未來」。</p>
+    <div class="ind-row"><span class="ind-code">P8.1</span><span class="ind-name"><strong>技術成熟度</strong> <span style="color:var(--accent);">[NLP]</span> — 萌芽期 / 成長期 / 成熟期 / 衰退期</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P8.2</span><span class="ind-name"><strong>引用趨勢斜率</strong> — 近年引用數量的變化方向</span><span class="ind-weight">20%</span></div>
+    <div class="ind-row"><span class="ind-code">P8.3</span><span class="ind-name"><strong>產業採用度</strong> <span style="color:var(--accent);">[NLP]</span> — 產業實際應用狀態</span><span class="ind-weight">25%</span></div>
+    <div class="ind-row"><span class="ind-code">P8.4</span><span class="ind-name"><strong>專利年齡效益</strong> — 與同齡群比較的超額引用表現</span><span class="ind-weight">15%</span></div>
+    <div class="ind-row"><span class="ind-code">P8.5</span><span class="ind-name"><strong>未來應用潛力</strong> <span style="color:var(--accent);">[NLP]</span> — 向新應用領域延伸的可能性</span><span class="ind-weight">25%</span></div>
+  </div>
+</div>
+
+<!-- 計分方法論 -->
+<div class="section" id="sec-scoring">
+  <div class="subsection-title">計分方法論</div>
+  <div class="card">
+    <div class="flow" style="margin-bottom:24px;">
+      <div class="flow-box" style="min-width:150px;">原始值計算<br><small>結構化 + NLP</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box light" style="min-width:150px;">池內正規化<br><small>百分位排序</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box accent" style="min-width:150px;">支柱聚合<br><small>加權平均</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box gold" style="min-width:150px;">PSS 總分<br><small>0-100</small></div>
+    </div>
+    <table>
+      <tr><th>正規化類型</th><th>適用指標</th><th>方法</th></tr>
+      <tr><td>連續型</td><td>大多數指標</td><td>池內百分位排序，同值同名次</td></tr>
+      <tr><td>布林型</td><td>三方專利 (P4.3)</td><td>稀缺度加權：命中率越低，分數越高</td></tr>
+      <tr><td>NLP 評分型</td><td>16 項 NLP 指標</td><td>結構化 Rubric 評分 + 二次百分位正規化</td></tr>
+      <tr><td>門檻型</td><td>法律狀態 (P2.4)</td><td>篩選條件，權重為零，不參與計分</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- 指標分類 -->
+<div class="section" id="sec-indicators">
+  <div class="subsection-title">指標分類與技術壁壘</div>
+  <div class="card-grid card-grid-3">
+    <div class="stat-card" style="border-top:3px solid var(--primary);">
+      <div class="stat-num">33</div>
+      <div class="stat-label">結構化指標</div>
+      <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">基於書目資訊、法律狀態、引用網路等可量化數據直接計算</p>
+    </div>
+    <div class="stat-card" style="border-top:3px solid var(--accent);">
+      <div class="stat-num">16</div>
+      <div class="stat-label">NLP 增強指標</div>
+      <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">運用 NLP 技術分析專利文本，評估傳統方法無法觸及的語意維度</p>
+    </div>
+    <div class="stat-card" style="border-top:3px solid var(--gold);">
+      <div class="stat-num">1+</div>
+      <div class="stat-label">衍生指標</div>
+      <p style="font-size:13px; color:var(--text-muted); margin-top:8px;">跨支柱資訊的加權組合，衡量複合面向</p>
+    </div>
+  </div>
+  <div class="insight" style="margin-top:20px;">
+    <strong>NLP 品質保障三層機制：</strong>
+    <ul>
+      <li><strong>結構化評分準則</strong>：每項 NLP 指標配備 1-10 分的明確等級定義</li>
+      <li><strong>推理留痕</strong>：完整推理過程存檔，每個分數可追溯、可稽核</li>
+      <li><strong>池內校正</strong>：檢查分數統計分布，避免評分偏態</li>
+    </ul>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ PART 4: 案例展示 ═══════════════ -->
+
+<div class="section" id="sec-case-intro">
+  <div class="section-num">Part 4 — 案例展示</div>
+  <div class="section-title">US10148981 — 聯發科 Palette Coding 視訊編碼專利</div>
+  <div class="card">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div><span style="color:var(--text-muted);">專利號</span><br><strong>US10148981B2</strong></div>
+      <div><span style="color:var(--text-muted);">專利權人</span><br><strong>MediaTek Singapore Pte. Ltd.</strong></div>
+      <div><span style="color:var(--text-muted);">專利名稱</span><br><strong>Methods of palette coding with inter-prediction in video coding</strong></div>
+      <div><span style="color:var(--text-muted);">申請日 / 公告日</span><br><strong>2016-03-18 / 2018-12-04</strong></div>
+      <div><span style="color:var(--text-muted);">請求項數</span><br><strong>28 項（獨立項 3）</strong></div>
+      <div><span style="color:var(--text-muted);">家族國家</span><br><strong>CN, EP, KR, US, WO</strong></div>
+      <div><span style="color:var(--text-muted);">法律狀態</span><br><strong style="color:var(--green);">有效</strong></div>
+      <div><span style="color:var(--text-muted);">剩餘年限</span><br><strong>約 10 年（至 2036-03-18）</strong></div>
+    </div>
+    <div class="insight" style="margin-top:20px;">
+      <strong>技術概述：</strong>
+      <p>本專利涉及螢幕內容視訊編碼技術，在 Palette Coding 框架中新增「Copy-Inter Mode」，允許編碼器利用其他畫面的參考區塊進行預測。突破傳統 palette coding 僅限 intra-picture 的限制，將 reference samples 轉換為 palette indices 進行 inter-prediction，大幅提升螢幕內容的壓縮效率。適用於視訊會議、遠端桌面、雲端串流等應用。</p>
+    </div>
+  </div>
+</div>
+
+<!-- PSS 總覽 -->
+<div class="section" id="sec-case-pss">
+  <div class="section-title">PSS 評分總覽</div>
+
+  <div class="card" style="text-align:center; padding:40px;">
+    <div style="font-size:14px; color:var(--text-muted); margin-bottom:8px;">PSS 總分（授權導向方案）</div>
+    <div class="big-num">62.17</div>
+    <div style="margin-top:8px;">
+      <span class="pctl-tag pctl-tag-green" style="font-size:16px; padding:6px 18px;">百分位 98.3%</span>
+    </div>
+    <div style="margin-top:12px; color:var(--text-muted);">池內排名 <strong>4 / 183</strong> ｜ 多媒體影音/影像處理</div>
+  </div>
+
+  <div class="card">
+    <div id="case-radar" class="chart-container"></div>
+  </div>
+</div>
+
+<!-- 五方案穩定性 -->
+<div class="section" id="sec-case-stability">
+  <div class="section-title">五套權重方案穩定性分析</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>方案</th><th>PSS 總分</th><th>排名</th><th>百分位</th></tr></thead>
+      <tbody>
+        <tr style="background:#f0f4ff; font-weight:600;"><td>授權導向（原始版）★</td><td>62.17</td><td>4</td><td><span class="pctl-tag pctl-tag-green">98.3%</span></td></tr>
+        <tr><td>授權導向（專家版）</td><td>62.04</td><td>4</td><td><span class="pctl-tag pctl-tag-green">98.3%</span></td></tr>
+        <tr><td>訴訟強度</td><td>62.17</td><td>6</td><td><span class="pctl-tag pctl-tag-green">97.2%</span></td></tr>
+        <tr><td>投資/併購</td><td>61.85</td><td>5</td><td><span class="pctl-tag pctl-tag-green">97.8%</span></td></tr>
+        <tr><td>技術佈局</td><td>64.46</td><td>5</td><td><span class="pctl-tag pctl-tag-green">97.8%</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <div id="cross-compare" class="chart-container chart-sm"></div>
+  </div>
+  <div class="insight">
+    <strong>穩定性結論：</strong>五套方案百分位均超過 97%，PSS 總分介於 61.85-64.46，極度穩定。無論以哪種評估視角，此專利都是池內前 3% 的核心資產。
+  </div>
+</div>
+
+<!-- 八支柱深度數據 -->
+<div class="section" id="sec-case-detail">
+  <div class="section-title">八支柱深度數據</div>
+
+  <details>
+    <summary>P1 書目計量（63.89 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P1.1</strong></td><td>前向引用數</td><td>30</td><td>98.1</td><td><span class="pctl-tag pctl-tag-green">97.8%</span></td><td>20%</td></tr>
+        <tr><td><strong>P1.2</strong></td><td>引用速度</td><td>2.99</td><td>98.9</td><td><span class="pctl-tag pctl-tag-green">98.6%</span></td><td>20%</td></tr>
+        <tr><td><strong>P1.3</strong></td><td>通用性指數</td><td>0.00</td><td>10.6</td><td><span class="pctl-tag pctl-tag-yellow">60.7%</span></td><td>15%</td></tr>
+        <tr><td><strong>P1.4</strong></td><td>原創性指數</td><td>0.00</td><td>11.5</td><td><span class="pctl-tag pctl-tag-orange">26.2%</span></td><td>10%</td></tr>
+        <tr><td><strong>P1.5</strong></td><td>顛覆性指數</td><td>0.16</td><td>84.0</td><td><span class="pctl-tag pctl-tag-green">84.4%</span></td><td>10%</td></tr>
+        <tr><td><strong>P1.6</strong></td><td>後向引用數</td><td>11</td><td>80.5</td><td><span class="pctl-tag pctl-tag-green">80.3%</span></td><td>5%</td></tr>
+        <tr><td><strong>P1.7</strong></td><td>審查員引用率</td><td>0.45</td><td>46.6</td><td><span class="pctl-tag pctl-tag-green">82.5%</span></td><td>20%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P2 法律強度（67.13 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P2.1</strong></td><td>專利家族規模</td><td>5</td><td>88.5</td><td><span class="pctl-tag pctl-tag-green">88.3%</span></td><td>10%</td></tr>
+        <tr><td><strong>P2.2</strong></td><td>請求項數量</td><td>28</td><td>92.3</td><td><span class="pctl-tag pctl-tag-green">92.1%</span></td><td>10%</td></tr>
+        <tr><td><strong>P2.3</strong></td><td>獨立請求項數量</td><td>3</td><td>68.4</td><td><span class="pctl-tag pctl-tag-yellow">68.3%</span></td><td>15%</td></tr>
+        <tr><td><strong>P2.5</strong></td><td>剩餘專利年限</td><td>9.97</td><td>67.6</td><td><span class="pctl-tag pctl-tag-yellow">67.5%</span></td><td>25%</td></tr>
+        <tr><td><strong>P2.7</strong></td><td>接續/分割申請</td><td>1</td><td>94.0</td><td><span class="pctl-tag pctl-tag-green">93.7%</span></td><td>10%</td></tr>
+        <tr><td><strong>P2.8</strong></td><td>審查歷程強度</td><td>0</td><td>37.1</td><td><span class="pctl-tag pctl-tag-orange">37.2%</span></td><td>20%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P3 技術價值（57.86 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P3.4</strong></td><td>說明書深度</td><td>51473</td><td>91.8</td><td><span class="pctl-tag pctl-tag-green">91.5%</span></td><td>10%</td></tr>
+        <tr><td><strong>P3.5</strong></td><td>技術新穎性評估 [NLP]</td><td>7</td><td>94.2</td><td><span class="pctl-tag pctl-tag-green">94.0%</span></td><td>30%</td></tr>
+        <tr><td><strong>P3.6</strong></td><td>發明層級分類 [NLP]</td><td>3</td><td>59.3</td><td><span class="pctl-tag pctl-tag-yellow">59.3%</span></td><td>20%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P4 市場覆蓋（71.08 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P4.1</strong></td><td>家族地理廣度</td><td>5</td><td>92.9</td><td><span class="pctl-tag pctl-tag-green">92.6%</span></td><td>15%</td></tr>
+        <tr><td><strong>P4.2</strong></td><td>GDP 加權市場覆蓋</td><td>0.65</td><td>93.4</td><td><span class="pctl-tag pctl-tag-green">93.2%</span></td><td>30%</td></tr>
+        <tr><td><strong>P4.4</strong></td><td>關鍵市場命中率</td><td>0.80</td><td>94.5</td><td><span class="pctl-tag pctl-tag-green">94.3%</span></td><td>20%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P5 文本品質（50.03 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P5.1</strong></td><td>請求項明確性 [NLP]</td><td>8</td><td>81.6</td><td><span class="pctl-tag pctl-tag-green">81.4%</span></td><td>15%</td></tr>
+        <tr><td><strong>P5.4</strong></td><td>多重附屬效率 [NLP]</td><td>5</td><td>0.5</td><td><span class="pctl-tag pctl-tag-red">0.8%</span></td><td>8%</td></tr>
+        <tr><td><strong>P5.6</strong></td><td>Claim 層次結構 [NLP]</td><td>7</td><td>16.5</td><td><span class="pctl-tag pctl-tag-red">16.7%</span></td><td>12%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P6 網路中心性（82.62 分）⭐ 最高</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P6.1</strong></td><td>PageRank 中心性</td><td>0.01</td><td>98.1</td><td><span class="pctl-tag pctl-tag-green">97.8%</span></td><td>25%</td></tr>
+        <tr><td><strong>P6.2</strong></td><td>中介中心性</td><td>0.00</td><td>96.2</td><td><span class="pctl-tag pctl-tag-green">95.9%</span></td><td>25%</td></tr>
+        <tr><td><strong>P6.3</strong></td><td>Hub/Authority 分數</td><td>0.00</td><td>86.3</td><td><span class="pctl-tag pctl-tag-green">86.1%</span></td><td>25%</td></tr>
+        <tr><td><strong>P6.4</strong></td><td>社群橋接位置</td><td>0.00</td><td>50.0</td><td><span class="pctl-tag pctl-tag-yellow">50.0%</span></td><td>25%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P7 授權潛力（61.71 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P7.1</strong></td><td>侵權可偵測性 [NLP]</td><td>4</td><td>53.0</td><td><span class="pctl-tag pctl-tag-yellow">53.0%</span></td><td>20%</td></tr>
+        <tr><td><strong>P7.2</strong></td><td>迴避設計難度 [NLP]</td><td>5</td><td>37.4</td><td><span class="pctl-tag pctl-tag-orange">37.4%</span></td><td>20%</td></tr>
+        <tr><td><strong>P7.3</strong></td><td>損害賠償基礎 [NLP]</td><td>6</td><td>75.5</td><td><span class="pctl-tag pctl-tag-green">75.4%</span></td><td>15%</td></tr>
+        <tr><td><strong>P7.6</strong></td><td>阻斷位置指數</td><td>66.43</td><td>66.4</td><td><span class="pctl-tag pctl-tag-green">87.7%</span></td><td>15%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+  <details>
+    <summary>P8 前瞻價值（47.87 分）</summary>
+    <div class="detail-content">
+      <table><thead><tr><th>指標</th><th>名稱</th><th>原始值</th><th>正規化</th><th>百分位</th><th>權重</th></tr></thead><tbody>
+        <tr><td><strong>P8.1</strong></td><td>技術成熟度 [NLP]</td><td>8</td><td>62.6</td><td><span class="pctl-tag pctl-tag-yellow">62.6%</span></td><td>15%</td></tr>
+        <tr><td><strong>P8.4</strong></td><td>專利年齡效益</td><td>8.15</td><td>97.3</td><td><span class="pctl-tag pctl-tag-green">97.0%</span></td><td>15%</td></tr>
+        <tr><td><strong>P8.5</strong></td><td>未來應用潛力 [NLP]</td><td>5</td><td>34.3</td><td><span class="pctl-tag pctl-tag-orange">34.4%</span></td><td>25%</td></tr>
+      </tbody></table>
+    </div>
+  </details>
+</div>
+
+<!-- 強項 Top 10 -->
+<div class="section" id="sec-case-top">
+  <div class="section-title">強項亮點 Top 10</div>
+  <div class="card">
+    <div id="top10-chart" class="chart-container chart-sm"></div>
+  </div>
+</div>
+
+<!-- 弱項 Bottom 10 -->
+<div class="section" id="sec-case-bottom">
+  <div class="section-title">風險與弱項 Bottom 10</div>
+  <div class="card">
+    <div id="bottom10-chart" class="chart-container chart-sm"></div>
+  </div>
+</div>
+
+<!-- 綜合評估 -->
+<div class="section" id="sec-case-conclusion">
+  <div class="section-title">綜合評估與行動建議</div>
+  <div class="highlight-box">
+    <h3>高百分位核心資產（98.3%）</h3>
+    <p>US10148981 在五套評估方案中均展現卓越穩定性，屬池內前 2% 的核心資產，具備極強之授權變現潛力與訴訟防禦價值。</p>
+  </div>
+  <div class="card">
+    <ol style="padding-left:20px; line-height:2.2;">
+      <li><strong>授權策略</strong>：適合採「非排他性授權」或「交叉授權」模式，目標市場鎖定高市場覆蓋率之成熟科技產業</li>
+      <li><strong>組合搭配</strong>：建議與「前瞻價值」較高之新世代專利搭配，補足未來應用潛力</li>
+      <li><strong>風險提醒</strong>：需注意「迴避設計難度」偏低（37.4%），競爭者可能繞過；「審查歷程強度」較弱（37.2%），可能面臨有效性挑戰</li>
+      <li><strong>強項運用</strong>：引用網路中樞紐地位（P6 = 82.62）為最大議價籌碼，談判時應重點展示</li>
+    </ol>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ PART 5: FTO 分析 ═══════════════ -->
+
+<div class="section" id="sec-fto-flow">
+  <div class="section-num">Part 5 — FTO 侵權比對分析</div>
+  <div class="section-title">FTO 分析流程</div>
+  <div class="flow">
+    <div class="flow-box">建立候選池<br><small>319 件專利</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box light">AI 相似度評分<br><small>Qwen3.5 LLM</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box accent">逐 Claim 比對<br><small>全要件原則</small></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box gold">均等論分析<br><small>F-W-R 測試</small></div>
+  </div>
+</div>
+
+<div class="section" id="sec-fto-result">
+  <div class="section-title">比對結果：風險矩陣</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>對比專利</th><th>權利人</th><th>侵權判定</th><th>風險等級</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>US12418660</strong><br><small>String Video Coding</small></td>
+          <td>浙江大華</td>
+          <td class="cmp-not">✗ 不侵權</td>
+          <td><span class="risk-badge risk-very-low">極低</span></td>
+        </tr>
+        <tr>
+          <td><strong>US10506254</strong><br><small>Base Color Index Map Mode</small></td>
+          <td>Microsoft</td>
+          <td class="cmp-not">✗ 不侵權</td>
+          <td><span class="risk-badge risk-very-low">極低</span></td>
+        </tr>
+        <tr>
+          <td><strong>US09544607</strong><br><small>Palette Index Signaling</small></td>
+          <td>HFI Innovation</td>
+          <td class="cmp-not">✗ 不侵權</td>
+          <td><span class="risk-badge risk-very-low">極低</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="insight">
+    <strong>核心結論：</strong>鑑定物 US10148981 不落入三件對比專利的任何權利範圍，侵權風險極低。候選池 319 件中最高相似度評分僅 7 分，整體 palette coding inter-prediction 領域競爭專利稀少，鑑定物具有良好技術獨立性。
+  </div>
+</div>
+
+<div class="section" id="sec-fto-diff">
+  <div class="section-title">技術差異摘要</div>
+  <div class="card" style="overflow-x:auto;">
+    <table>
+      <thead><tr><th>技術維度</th><th>鑑定物 US10148981</th><th>US12418660 (大華)</th><th>US10506254 (Microsoft)</th><th>US09544607 (HFI)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>編碼框架</strong></td><td>Palette Coding</td><td>String Video Coding</td><td>Base Color Index Map</td><td>Palette Coding</td></tr>
+        <tr><td><strong>預測類型</strong></td><td style="color:var(--green); font-weight:700;">Inter + Intra</td><td>Intra（同 frame）</td><td>Intra-picture only</td><td>N/A（語法優化）</td></tr>
+        <tr><td><strong>操作域</strong></td><td>Palette index 域</td><td>Pixel 域</td><td>Index map 域</td><td>Palette index 域</td></tr>
+        <tr><td><strong>核心機制</strong></td><td>MV/BV 定位 + samples→indices 轉換</td><td>像素字串搜尋 + flip pattern</td><td>Base color table + exception values</td><td>單一 index 檢測 + 省略 map</td></tr>
+        <tr><td><strong>解決問題</strong></td><td style="color:var(--accent); font-weight:600;">突破 palette coding intra 限制</td><td>改善字串匹配精度</td><td>定義 intra 語法</td><td>減少冗餘語法</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ PART 6: 收益分潤 ═══════════════ -->
+
+<div class="section" id="sec-revenue">
+  <div class="section-num">Part 6 — 收益分潤系統</div>
+  <div class="section-title">收益分潤模型</div>
+  <div class="card">
+    <h3 style="color:var(--primary); margin-bottom:16px;">收益瀑布（Revenue Waterfall）</h3>
+    <div class="wf-row">
+      <div class="wf-label"><strong>授權總收入</strong></div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:100%; background:var(--primary);">100%</div></div>
+      <div class="wf-pct">100%</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">稅金扣除</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:5%; background:var(--red);">5%</div></div>
+      <div class="wf-pct" style="color:var(--red);">-5%</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label">平台服務費</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:15%; background:var(--orange);">15%</div></div>
+      <div class="wf-pct" style="color:var(--orange);">-15%</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label"><strong>可分配金額</strong></div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:80%; background:var(--accent);">80%</div></div>
+      <div class="wf-pct" style="color:var(--accent);">80%</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label" style="padding-left:20px;">→ 授權方分配</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:60%; background:var(--green);">75% of 80%</div></div>
+      <div class="wf-pct" style="color:var(--green);">60%</div>
+    </div>
+    <div class="wf-row">
+      <div class="wf-label" style="padding-left:20px;">→ TIS 平台分配</div>
+      <div class="wf-bar-wrap"><div class="wf-bar" style="width:20%; background:var(--gold);">25% of 80%</div></div>
+      <div class="wf-pct" style="color:var(--gold);">20%</div>
+    </div>
+    <p style="margin-top:16px; color:var(--text-muted); font-size:13px;">授權方的分配金額再依據各專利的 PSS 加權分數（SABCD 評級 × 權重）進行比例分配。</p>
+  </div>
+</div>
+
+<div class="section" id="sec-rating">
+  <div class="section-title">SABCD 評級系統</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>評級</th><th>權重倍數</th><th>說明</th></tr></thead>
+      <tbody>
+        <tr><td><span style="background:#ef4444; color:#fff; padding:2px 10px; border-radius:4px; font-weight:700;">S</span></td><td>3.0×</td><td>頂尖核心專利，PSS 極高</td></tr>
+        <tr><td><span style="background:#f97316; color:#fff; padding:2px 10px; border-radius:4px; font-weight:700;">A</span></td><td>2.5×</td><td>高價值專利</td></tr>
+        <tr><td><span style="background:#eab308; color:#fff; padding:2px 10px; border-radius:4px; font-weight:700;">B</span></td><td>2.0×</td><td>中等價值專利</td></tr>
+        <tr><td><span style="background:#22c55e; color:#fff; padding:2px 10px; border-radius:4px; font-weight:700;">C</span></td><td>1.5×</td><td>標準專利</td></tr>
+        <tr><td><span style="background:#94a3b8; color:#fff; padding:2px 10px; border-radius:4px; font-weight:700;">D</span></td><td>1.0×</td><td>基礎專利</td></tr>
+      </tbody>
+    </table>
+    <div class="insight" style="margin-top:16px;">
+      <strong>設計理念：</strong>SABCD 評級確保高品質專利獲得更大比例的收益分配，激勵授權方持續投入高價值專利的培育與維護。S 級專利的每件收益是 D 級的 3 倍，獎勵品質而非數量。
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════ PART 7: 附錄 ═══════════════ -->
+
+<div class="section" id="sec-appendix-ind">
+  <div class="section-num">附錄</div>
+  <div class="section-title">PSS 50 項指標完整清單</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>支柱</th><th>代碼</th><th>指標名稱</th><th>類型</th><th>權重</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="7">P1 書目計量</td><td>P1.1</td><td>前向引用數</td><td>結構化</td><td>20%</td></tr>
+        <tr><td>P1.2</td><td>引用速度</td><td>結構化</td><td>20%</td></tr>
+        <tr><td>P1.3</td><td>通用性指數</td><td>結構化</td><td>15%</td></tr>
+        <tr><td>P1.4</td><td>原創性指數</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P1.5</td><td>顛覆性指數</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P1.6</td><td>後向引用數</td><td>結構化</td><td>5%</td></tr>
+        <tr><td>P1.7</td><td>審查員引用率</td><td>結構化</td><td>20%</td></tr>
+        <tr><td rowspan="8">P2 法律強度</td><td>P2.1</td><td>專利家族規模</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P2.2</td><td>請求項數量</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P2.3</td><td>獨立請求項數量</td><td>結構化</td><td>15%</td></tr>
+        <tr><td>P2.4</td><td>法律狀態</td><td>門檻</td><td>0%</td></tr>
+        <tr><td>P2.5</td><td>剩餘專利年限</td><td>結構化</td><td>25%</td></tr>
+        <tr><td>P2.6</td><td>維護費狀態</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P2.7</td><td>接續/分割申請</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P2.8</td><td>審查歷程強度</td><td>結構化</td><td>20%</td></tr>
+        <tr><td rowspan="7">P3 技術價值</td><td>P3.1</td><td>IPC 分類廣度</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P3.2</td><td>技術融合指數</td><td>結構化</td><td>15%</td></tr>
+        <tr><td>P3.3</td><td>發明人團隊規模</td><td>結構化</td><td>5%</td></tr>
+        <tr><td>P3.4</td><td>說明書深度</td><td>結構化</td><td>10%</td></tr>
+        <tr><td>P3.5</td><td>技術新穎性評估</td><td>NLP</td><td>30%</td></tr>
+        <tr><td>P3.6</td><td>發明層級分類</td><td>NLP</td><td>20%</td></tr>
+        <tr><td>P3.7</td><td>SEP 必要性</td><td>選用</td><td>10%</td></tr>
+        <tr><td rowspan="5">P4 市場覆蓋</td><td>P4.1</td><td>家族地理廣度</td><td>結構化</td><td>15%</td></tr>
+        <tr><td>P4.2</td><td>GDP 加權市場覆蓋</td><td>結構化</td><td>30%</td></tr>
+        <tr><td>P4.3</td><td>三方專利指標</td><td>布林</td><td>20%</td></tr>
+        <tr><td>P4.4</td><td>關鍵市場命中率</td><td>結構化</td><td>20%</td></tr>
+        <tr><td>P4.5</td><td>新興市場佈局</td><td>結構化</td><td>15%</td></tr>
+        <tr><td rowspan="8">P5 文本品質</td><td>P5.1</td><td>請求項明確性</td><td>NLP</td><td>15%</td></tr>
+        <tr><td>P5.2</td><td>說明書支撐度</td><td>NLP</td><td>15%</td></tr>
+        <tr><td>P5.3</td><td>功能性語言比例</td><td>NLP</td><td>10%</td></tr>
+        <tr><td>P5.4</td><td>多重附屬效率</td><td>NLP</td><td>8%</td></tr>
+        <tr><td>P5.5</td><td>請求項範圍寬度</td><td>NLP</td><td>15%</td></tr>
+        <tr><td>P5.6</td><td>請求項層次結構完整性</td><td>NLP</td><td>12%</td></tr>
+        <tr><td>P5.7</td><td>多語言一致性</td><td>NLP/選用</td><td>10%</td></tr>
+        <tr><td>P5.8</td><td>說明書品質綜合</td><td>NLP</td><td>15%</td></tr>
+        <tr><td rowspan="4">P6 網路中心性</td><td>P6.1</td><td>PageRank 中心性</td><td>結構化</td><td>25%</td></tr>
+        <tr><td>P6.2</td><td>中介中心性</td><td>結構化</td><td>25%</td></tr>
+        <tr><td>P6.3</td><td>Hub/Authority 分數</td><td>結構化</td><td>25%</td></tr>
+        <tr><td>P6.4</td><td>社群橋接位置</td><td>結構化</td><td>25%</td></tr>
+        <tr><td rowspan="6">P7 授權潛力</td><td>P7.1</td><td>侵權可偵測性</td><td>NLP</td><td>20%</td></tr>
+        <tr><td>P7.2</td><td>迴避設計難度</td><td>NLP</td><td>20%</td></tr>
+        <tr><td>P7.3</td><td>損害賠償基礎</td><td>NLP</td><td>15%</td></tr>
+        <tr><td>P7.4</td><td>授權歷史信號</td><td>NLP</td><td>15%</td></tr>
+        <tr><td>P7.5</td><td>專利叢林密度</td><td>結構化</td><td>15%</td></tr>
+        <tr><td>P7.6</td><td>阻斷位置指數</td><td>衍生</td><td>15%</td></tr>
+        <tr><td rowspan="5">P8 前瞻價值</td><td>P8.1</td><td>技術成熟度</td><td>NLP</td><td>15%</td></tr>
+        <tr><td>P8.2</td><td>引用趨勢斜率</td><td>結構化</td><td>20%</td></tr>
+        <tr><td>P8.3</td><td>產業採用度</td><td>NLP</td><td>25%</td></tr>
+        <tr><td>P8.4</td><td>專利年齡效益</td><td>結構化</td><td>15%</td></tr>
+        <tr><td>P8.5</td><td>未來應用潛力</td><td>NLP</td><td>25%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="sec-appendix-fto">
+  <div class="section-title">FTO 詳細 Claim Chart</div>
+
+  <details>
+    <summary>US12418660 Claim 1 (浙江大華) — 逐要件比對</summary>
+    <div class="detail-content">
+      <table>
+        <thead><tr><th>要件</th><th>對比專利要求</th><th>鑑定物對應</th><th>比對</th></tr></thead>
+        <tbody>
+          <tr><td>D1-A</td><td>確定 CU 中的 current string</td><td>處理 block 中的 consecutive samples/indices</td><td class="cmp-partial">△</td></tr>
+          <tr><td>D1-B</td><td>在 searching area 搜尋 reference matching pixel</td><td>使用 MV/BV 定位 reference block，非逐像素搜尋</td><td class="cmp-not">✗</td></tr>
+          <tr><td>D1-C</td><td>基於 matching patterns 計算各群組 matching pixels 數量</td><td>不進行 matching pattern 分群計數</td><td class="cmp-not">✗</td></tr>
+          <tr><td>D1-D</td><td>基於 matching pixels 數量確定 target prediction</td><td>直接使用 reference block 對應位置的值</td><td class="cmp-not">✗</td></tr>
+          <tr><td>D1-E</td><td>包含 flip pattern（symmetric / multi-axis / complete）</td><td>附屬項支援翻轉/旋轉，但非 flip pattern matching</td><td class="cmp-partial">△</td></tr>
+          <tr><td>D1-F~H</td><td>Cost 比較 + 選擇最小 cost + Multi-axis flip 實施</td><td>不涉及 cost 比較機制</td><td class="cmp-not">✗</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; color:var(--red); font-weight:600;">結論：不構成字面侵權（6 項要件不符）。均等論三維度均不同。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>US10506254 Claim 1 (Microsoft) — 逐要件比對</summary>
+    <div class="detail-content">
+      <table>
+        <thead><tr><th>要件</th><th>對比專利要求</th><th>鑑定物對應</th><th>比對</th></tr></thead>
+        <tbody>
+          <tr><td>M1-A</td><td>使用 <strong>intra-picture compression</strong> 編碼 CU</td><td>Copy-inter mode 使用 <strong>inter-prediction</strong></td><td class="cmp-not">✗</td></tr>
+          <tr><td>M1-C</td><td>Index map 包含 exception values，以最高 index value 表示</td><td>未限定 exception values 表示方式</td><td class="cmp-not">✗</td></tr>
+          <tr><td>M1-D</td><td>Syntax element 指示 prediction mode 為 <strong>intra</strong></td><td>涉及 inter-prediction</td><td class="cmp-not">✗</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; color:var(--red); font-weight:600;">結論：不構成字面侵權。核心差異：intra-picture vs inter-prediction，技術方向相反。</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>US09544607 Claim 1 (HFI Innovation) — 逐要件比對</summary>
+    <div class="detail-content">
+      <table>
+        <thead><tr><th>要件</th><th>對比專利要求</th><th>鑑定物對應</th><th>比對</th></tr></thead>
+        <tbody>
+          <tr><td>H1-B</td><td>判斷是否只有單一 palette index</td><td>不涉及此判斷邏輯</td><td class="cmp-not">✗</td></tr>
+          <tr><td>H1-B1~B4</td><td>基於四個 syntax elements 判斷</td><td>不使用這四個 syntax elements</td><td class="cmp-not">✗</td></tr>
+          <tr><td>H1-C</td><td>若只有單一 palette index，省略 index map signaling</td><td>Copy-inter mode 始終涉及 index 預測</td><td class="cmp-not">✗</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; color:var(--red); font-weight:600;">結論：不構成字面侵權。對比專利處理語法冗餘，鑑定物處理預測效率，解決完全不同問題。</p>
+    </div>
+  </details>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  本簡報由 TIS 專利授權平台產出。分析工具：Claude Opus 4.6 + Qwen3.5 + Elasticsearch 專利資料庫。<br>
+  PSS 評分與 AI 生成內容僅供參考，不構成法律或商業建議。｜ 2026 年 4 月
+</div>
+
+</div><!-- .content -->
+</div><!-- .main -->
+</div><!-- .layout -->
+
+<!-- ═══════════════ ECHARTS SCRIPTS ═══════════════ -->
+<script>
+// Pillar names
+var pillarNames = {P1:"書目計量",P2:"法律強度",P3:"技術價值",P4:"市場覆蓋",P5:"文本品質",P6:"網路中心",P7:"授權潛力",P8:"前瞻價值"};
+var pillarScores = [63.89, 67.13, 57.86, 71.08, 50.03, 82.62, 61.71, 47.87];
+
+// ── Overview Radar (PSS framework intro) ──
+(function(){
+  var c = echarts.init(document.getElementById('pillar-radar-overview'));
+  c.setOption({
+    title:{text:'PSS 八支柱示意圖',left:'center',textStyle:{fontSize:16,color:'#1e3a5f'}},
+    tooltip:{},
+    radar:{
+      indicator:['P1','P2','P3','P4','P5','P6','P7','P8'].map(function(p){return{name:p+' '+pillarNames[p],max:100};}),
+      shape:'circle',splitNumber:4,
+      axisName:{color:'#1e3a5f',fontSize:12}
+    },
+    series:[{type:'radar',data:[{value:[75,75,75,75,75,75,75,75],name:'理想平衡',lineStyle:{type:'dashed',color:'#94a3b8'},areaStyle:{opacity:0.05},itemStyle:{color:'#94a3b8'}}]}]
+  });
+  window.addEventListener('resize',function(){c.resize();});
+})();
+
+// ── Case Radar ──
+(function(){
+  var c = echarts.init(document.getElementById('case-radar'));
+  c.setOption({
+    title:{text:'US10148981 八支柱雷達圖',left:'center',textStyle:{fontSize:16,color:'#1e3a5f'}},
+    tooltip:{},
+    radar:{
+      indicator:['P1','P2','P3','P4','P5','P6','P7','P8'].map(function(p){return{name:p+' '+pillarNames[p],max:100};}),
+      shape:'circle',splitNumber:4,
+      axisName:{color:'#1e3a5f',fontSize:12}
+    },
+    series:[{type:'radar',data:[{
+      value:pillarScores,name:'US10148981',
+      areaStyle:{opacity:0.25,color:'#2d5f8a'},
+      lineStyle:{width:2,color:'#2d5f8a'},
+      itemStyle:{color:'#2d5f8a'}
+    }]}]
+  });
+  window.addEventListener('resize',function(){c.resize();});
+})();
+
+// ── Cross Compare ──
+(function(){
+  var c = echarts.init(document.getElementById('cross-compare'));
+  var names = ['授權導向\n（原始版）','授權導向\n（專家版）','訴訟強度','投資/併購','技術佈局'];
+  var pss = [62.17,62.04,62.17,61.85,64.46];
+  var ranks = [4,4,6,5,5];
+  c.setOption({
+    title:{text:'五套方案 PSS 比較',left:'center',textStyle:{fontSize:14,color:'#1e3a5f'}},
+    tooltip:{formatter:function(p){return p.name+'<br>PSS: '+p.value+'<br>排名: #'+ranks[p.dataIndex];}},
+    grid:{left:20,right:20,top:50,bottom:50,containLabel:true},
+    xAxis:{type:'category',data:names,axisLabel:{fontSize:11,interval:0}},
+    yAxis:{type:'value',min:function(v){return Math.floor(v.min-2);},max:function(v){return Math.ceil(v.max+2);}},
+    series:[{type:'bar',data:pss.map(function(v,i){return{value:v,itemStyle:{color:i===0?'#1e3a5f':'#94a3b8'}};}),barWidth:40,label:{show:true,position:'top',formatter:function(p){return p.value+'\n#'+ranks[p.dataIndex];},fontSize:12}}]
+  });
+  window.addEventListener('resize',function(){c.resize();});
+})();
+
+// ── Top 10 ──
+(function(){
+  var c = echarts.init(document.getElementById('top10-chart'));
+  var items = [
+    {name:'P4.1 家族地理廣度',value:92.6},
+    {name:'P4.2 GDP 加權市場覆蓋',value:93.2},
+    {name:'P2.7 接續/分割申請',value:93.7},
+    {name:'P3.5 技術新穎性評估',value:94.0},
+    {name:'P4.4 關鍵市場命中率',value:94.3},
+    {name:'P6.2 中介中心性',value:95.9},
+    {name:'P8.4 專利年齡效益',value:97.0},
+    {name:'P6.1 PageRank 中心性',value:97.8},
+    {name:'P1.1 前向引用數',value:97.8},
+    {name:'P1.2 引用速度',value:98.6}
+  ];
+  c.setOption({
+    title:{text:'強項指標百分位',left:'center',textStyle:{fontSize:14,color:'#1e3a5f'}},
+    tooltip:{formatter:'{b}: {c}%'},
+    grid:{left:180,right:50,top:40,bottom:20},
+    xAxis:{type:'value',max:100,axisLabel:{formatter:'{value}%'}},
+    yAxis:{type:'category',data:items.map(function(d){return d.name;})},
+    series:[{type:'bar',data:items.map(function(d){return{value:d.value,itemStyle:{color:'#22c55e'}};}),barWidth:16,label:{show:true,position:'right',formatter:'{c}%',fontSize:11}}]
+  });
+  window.addEventListener('resize',function(){c.resize();});
+})();
+
+// ── Bottom 10 ──
+(function(){
+  var c = echarts.init(document.getElementById('bottom10-chart'));
+  var items = [
+    {name:'P5.4 多重附屬效率',value:0.8},
+    {name:'P5.6 Claim 層次結構',value:16.7},
+    {name:'P3.2 技術融合指數',value:18.3},
+    {name:'P1.4 原創性指數',value:26.2},
+    {name:'P3.1 IPC 分類廣度',value:29.8},
+    {name:'P8.5 未來應用潛力',value:34.4},
+    {name:'P2.8 審查歷程強度',value:37.2},
+    {name:'P7.2 迴避設計難度',value:37.4},
+    {name:'P4.3 三方專利指標',value:47.0},
+    {name:'P6.4 社群橋接位置',value:50.0}
+  ];
+  c.setOption({
+    title:{text:'弱項指標百分位',left:'center',textStyle:{fontSize:14,color:'#1e3a5f'}},
+    tooltip:{formatter:'{b}: {c}%'},
+    grid:{left:180,right:50,top:40,bottom:20},
+    xAxis:{type:'value',max:100,axisLabel:{formatter:'{value}%'}},
+    yAxis:{type:'category',data:items.map(function(d){return d.name;})},
+    series:[{type:'bar',data:items.map(function(d){var co=d.value<25?'#ef4444':(d.value<50?'#f97316':'#eab308');return{value:d.value,itemStyle:{color:co}};}),barWidth:16,label:{show:true,position:'right',formatter:'{c}%',fontSize:11}}]
+  });
+  window.addEventListener('resize',function(){c.resize();});
+})();
+
+// ── Sidebar scroll spy ──
+(function(){
+  var links = document.querySelectorAll('.sidebar a');
+  var sections = [];
+  links.forEach(function(a){
+    var id = a.getAttribute('href');
+    if(id && id.startsWith('#')){
+      var el = document.querySelector(id);
+      if(el) sections.push({el:el,a:a});
+    }
+  });
+  window.addEventListener('scroll',function(){
+    var scroll = window.scrollY + 100;
+    var current = null;
+    sections.forEach(function(s){ if(s.el.offsetTop <= scroll) current = s; });
+    links.forEach(function(a){a.classList.remove('active');});
+    if(current) current.a.classList.add('active');
+  });
+})();
+</script>
+</body>
+</html>

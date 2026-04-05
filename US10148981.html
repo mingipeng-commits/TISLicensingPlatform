@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>專利健診報告 — US10148981</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<style>
+:root {
+  --primary: #1e3a5f;
+  --primary-light: #2d5f8a;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --green: #22c55e;
+  --yellow: #eab308;
+  --orange: #f97316;
+  --red: #ef4444;
+  --green-bg: #f0fdf4;
+  --yellow-bg: #fefce8;
+  --orange-bg: #fff7ed;
+  --red-bg: #fef2f2;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+  background: var(--bg); color: var(--text);
+  line-height: 1.6; font-size: 15px;
+}
+.layout { display: flex; min-height: 100vh; }
+
+/* 左側導航 */
+.sidebar {
+  width: 240px; position: fixed; top: 0; left: 0; bottom: 0;
+  background: var(--primary); color: #fff; padding: 24px 16px;
+  overflow-y: auto; z-index: 100;
+}
+.sidebar h2 { font-size: 14px; margin-bottom: 20px; opacity: 0.8; letter-spacing: 1px; }
+.sidebar a {
+  display: block; padding: 8px 12px; color: rgba(255,255,255,0.75);
+  text-decoration: none; font-size: 13px; border-radius: 6px;
+  margin-bottom: 2px; transition: all 0.2s;
+}
+.sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.15); color: #fff; }
+
+/* 主內容 */
+.main { margin-left: 240px; flex: 1; padding: 0; }
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: #fff; padding: 48px 48px 40px; position: relative;
+}
+.hero-patent { font-size: 36px; font-weight: 700; letter-spacing: 1px; }
+.hero-pss { font-size: 72px; font-weight: 800; margin: 16px 0 8px; }
+.hero-meta { font-size: 14px; opacity: 0.8; }
+.hero-badge {
+  display: inline-block; padding: 6px 18px; border-radius: 20px;
+  font-size: 16px; font-weight: 600; margin-left: 16px;
+}
+.badge-green { background: var(--green); color: #fff; }
+.badge-yellow { background: var(--yellow); color: #000; }
+.badge-orange { background: var(--orange); color: #fff; }
+.badge-red { background: var(--red); color: #fff; }
+
+/* 區塊 */
+.content { padding: 32px 48px 64px; max-width: 1200px; }
+.section { margin-bottom: 48px; }
+.section-title {
+  font-size: 22px; font-weight: 700; color: var(--primary);
+  padding-bottom: 12px; border-bottom: 2px solid var(--primary);
+  margin-bottom: 24px;
+}
+.subsection-title {
+  font-size: 17px; font-weight: 600; color: var(--primary);
+  margin: 24px 0 12px; padding-left: 12px;
+  border-left: 3px solid var(--primary);
+}
+
+/* 卡片 */
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+/* 表格 */
+table {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+}
+th {
+  background: #f1f5f9; padding: 10px 12px; text-align: left;
+  font-weight: 600; color: var(--primary); border-bottom: 2px solid var(--border);
+}
+td {
+  padding: 8px 12px; border-bottom: 1px solid var(--border);
+}
+tr:hover { background: #f8fafc; }
+
+/* 進度條 */
+.pctl-bar {
+  height: 8px; border-radius: 4px; background: #e2e8f0;
+  position: relative; min-width: 80px;
+}
+.pctl-bar-fill {
+  height: 100%; border-radius: 4px; transition: width 0.3s;
+}
+.pctl-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 12px; font-weight: 600;
+}
+.pctl-tag-green { background: var(--green-bg); color: #166534; }
+.pctl-tag-yellow { background: var(--yellow-bg); color: #854d0e; }
+.pctl-tag-orange { background: var(--orange-bg); color: #9a3412; }
+.pctl-tag-red { background: var(--red-bg); color: #991b1b; }
+
+/* AI 引用 */
+.ai-insight {
+  background: #f0f4ff; border-left: 4px solid var(--primary-light);
+  padding: 16px 20px; margin: 16px 0; border-radius: 0 8px 8px 0;
+  font-size: 14px; line-height: 1.7;
+}
+.ai-insight strong { color: var(--primary); }
+.ai-points { margin-top: 8px; padding-left: 20px; }
+.ai-points li { margin-bottom: 4px; }
+
+/* 基本資料表格 */
+.info-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+.info-item { display: flex; }
+.info-label { color: var(--text-muted); min-width: 100px; font-size: 13px; }
+.info-value { font-weight: 500; }
+
+/* 圖表容器 */
+.chart-container { width: 100%; height: 400px; }
+.chart-sm { height: 300px; }
+
+/* 響應式 */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .hero { padding: 24px; }
+  .hero-pss { font-size: 48px; }
+  .content { padding: 16px; }
+  .info-grid { grid-template-columns: 1fr; }
+}
+
+/* 頁尾 */
+.footer {
+  text-align: center; padding: 24px; color: var(--text-muted);
+  font-size: 13px; border-top: 1px solid var(--border); margin-top: 48px;
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- 左側導航 -->
+<nav class="sidebar">
+  <h2>專利健診報告</h2>
+  <a href="#sec-basic">1. 基本資料</a>
+  <a href="#sec-pss">2. PSS 總覽</a>
+  <a href="#sec-pillars">3. 支柱分析</a>
+  <a href="#sec-P1" style="padding-left:28px; font-size:12px;">P1 書目計量</a>
+  <a href="#sec-P2" style="padding-left:28px; font-size:12px;">P2 法律強度</a>
+  <a href="#sec-P3" style="padding-left:28px; font-size:12px;">P3 技術價值</a>
+  <a href="#sec-P4" style="padding-left:28px; font-size:12px;">P4 市場覆蓋</a>
+  <a href="#sec-P5" style="padding-left:28px; font-size:12px;">P5 文本品質</a>
+  <a href="#sec-P6" style="padding-left:28px; font-size:12px;">P6 網路中心</a>
+  <a href="#sec-P7" style="padding-left:28px; font-size:12px;">P7 授權潛力</a>
+  <a href="#sec-P8" style="padding-left:28px; font-size:12px;">P8 前瞻價值</a>
+  <a href="#sec-top10">4. 強項亮點</a>
+  <a href="#sec-bottom10">5. 風險弱項</a>
+  <a href="#sec-cross">6. 跨方案分析</a>
+  <a href="#sec-overall">7. 綜合評估</a>
+</nav>
+
+<!-- 主內容 -->
+<div class="main">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-patent">US10148981</div>
+  <div>
+    <span class="hero-pss">62.17</span>
+    <span class="hero-badge badge-green">
+      P98.3
+    </span>
+  </div>
+  <div class="hero-meta">
+    池內排名 4 / 183 |
+    2_多媒體影音/影像處理 |
+    方案：授權導向（原始版） |
+    2026-03-30 14:46:17
+  </div>
+</div>
+
+<div class="content">
+
+<!-- 1. 基本資料 -->
+<div class="section" id="sec-basic">
+  <div class="section-title">1. 專利基本資料</div>
+  <div class="card">
+    <div class="info-grid">
+      <div class="info-item"><span class="info-label">專利號</span><span class="info-value">US10148981</span></div>
+      <div class="info-item"><span class="info-label">國家</span><span class="info-value">US</span></div>
+      <div class="info-item"><span class="info-label">專利權人</span><span class="info-value">聯發科</span></div>
+      <div class="info-item"><span class="info-label">主 IPC</span><span class="info-value">H04N019/597</span></div>
+      <div class="info-item"><span class="info-label">申請日</span><span class="info-value">2016-03-18</span></div>
+      <div class="info-item"><span class="info-label">公告日</span><span class="info-value">2018-12-04</span></div>
+      <div class="info-item"><span class="info-label">法律狀態</span><span class="info-value">active</span></div>
+      <div class="info-item"><span class="info-label">請求項數</span><span class="info-value">28（獨立項 3）</span></div>
+      <div class="info-item"><span class="info-label">圖式數</span><span class="info-value">9</span></div>
+      <div class="info-item"><span class="info-label">說明書字數</span><span class="info-value">46973</span></div>
+      <div class="info-item"><span class="info-label">發明人</span><span class="info-value">Weijia Zhu, Kai Zhang, Xianguo Zhang</span></div>
+      <div class="info-item"><span class="info-label">家族國家</span><span class="info-value">CN, EP, KR, US, WO</span></div>
+    </div>
+
+    <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+      <strong>摘要：</strong>
+      <p style="color:var(--text-muted); margin-top:4px;">Method and apparatus for video coding using palette coding modes including a copy inter mode are disclosed. When the copy inter mode is selected, one or more consecutive current samples or indices of the current block are predicted by one or more consecutive reference samples or indices of a reference block at corresponding locations. Motion vector (MV) information for locating the reference block can be signalled in a bitstream for the current block. The motion vector information may be related to MV for the reference block corresponding to an Inter-prediction coding unit (CU) or a block vector (BV) for an Intra Block Copy (IntraBC) coded block. The location of the reference block can be determined implicitly without position information of the reference block signalled in a bitstream for the current block.</p>
+    </div>
+  </div>
+
+  <div class="ai-insight">
+    <strong>AI 技術概述：</strong>
+    <p>這項專利涉及視訊編碼技術，專門針對螢幕內容（如簡報、軟體介面）進行優化。傳統視訊壓縮對這類畫面效率較低，因為常有大面積相同顏色。本技術引入「調色盤編碼 (Palette Coding)」，並新增「複製間隔模式 (Copy Inter Mode)」。它允許編碼器直接複製參考區塊的顏色索引，而非重新傳輸像素數據。透過運動向量 (Motion Vector) 或隱式定位，系統能從當前或前一個畫面中尋找相似區塊進行複製，無需額外傳輸位置資訊。這大幅降低了數據量，提升壓縮效率，適合視訊會議、遠端桌面等應用，節省頻寬並提升畫質，對雲端服務與串流平台具商業價值。</p>
+    <ul class="ai-points">
+      <li>技術定位：專為螢幕內容設計的視訊壓縮技術，結合調色盤編碼 (Palette Coding) 與複製間隔模式 (Copy Inter Mode)。</li>
+      <li>解決問題：傳統編碼處理重複色塊時冗餘度高，導致檔案過大、傳輸耗時。</li>
+      <li>技術手段：利用運動向量 (Motion Vector) 或隱式規則定位參考區塊，直接複製顏色索引值。</li>
+      <li>商業應用：適用於視訊會議、遠端桌面及雲端串流，能有效節省頻寬並優化用戶體驗。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 2. PSS 總覽 -->
+<div class="section" id="sec-pss">
+  <div class="section-title">2. PSS 總覽</div>
+
+  <!-- 雷達圖 -->
+  <div class="card">
+    <div id="radar-chart" class="chart-container"></div>
+  </div>
+
+  <!-- 五方案比較表 -->
+  <div class="card">
+    <h3 style="margin-bottom:12px; color:var(--primary);">五套權重方案比較</h3>
+    <table>
+      <thead>
+        <tr><th>方案</th><th>PSS</th><th>排名</th><th>百分位</th></tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f0f4ff; font-weight:600;">
+          <td>授權導向（原始版） ★</td>
+          <td>62.17</td>
+          <td>4</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">
+              98.3%
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>授權導向（專家版）</td>
+          <td>62.04</td>
+          <td>4</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">
+              98.3%
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>訴訟強度</td>
+          <td>62.17</td>
+          <td>6</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">
+              97.2%
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>投資/併購</td>
+          <td>61.85</td>
+          <td>5</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">
+              97.8%
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td>技術佈局</td>
+          <td>64.46</td>
+          <td>5</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">
+              97.8%
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- 3. 八大支柱 -->
+<div class="section" id="sec-pillars">
+  <div class="section-title">3. 八大支柱深度分析</div>
+
+  <div id="sec-P1" style="margin-bottom:32px;">
+    <div class="subsection-title">P1 書目計量（63.89）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P1.1</strong></td>
+            <td>前向引用數
+            </td>
+            <td>30.00</td>
+            <td>98.1</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:97.8%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">97.8%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P1.2</strong></td>
+            <td>引用速度
+              <br><small style="color:var(--text-muted);">30.0 citations / 10.0 years</small>
+            </td>
+            <td>2.99</td>
+            <td>98.9</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:98.6%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">98.6%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P1.3</strong></td>
+            <td>通用性指數
+              <br><small style="color:var(--text-muted);">IPC distribution: {'H04N': 30}</small>
+            </td>
+            <td>0.00</td>
+            <td>10.6</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:60.7%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">60.7%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P1.4</strong></td>
+            <td>原創性指數
+              <br><small style="color:var(--text-muted);">ipcs=11/11, unique_ipc=1</small>
+            </td>
+            <td>0.00</td>
+            <td>11.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:26.2%; background:#f97316;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">26.2%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P1.5</strong></td>
+            <td>顛覆性指數
+              <br><small style="color:var(--text-muted);">Nf=30, Nb=11, log_ver</small>
+            </td>
+            <td>0.16</td>
+            <td>84.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:84.4%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">84.4%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P1.6</strong></td>
+            <td>後向引用數
+            </td>
+            <td>11.00</td>
+            <td>80.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:80.3%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">80.3%</span>
+              </div>
+            </td>
+            <td>5%</td>
+          </tr>
+          <tr>
+            <td><strong>P1.7</strong></td>
+            <td>審查員引用率
+              <br><small style="color:var(--text-muted);">examiner=5/11</small>
+            </td>
+            <td>0.45</td>
+            <td>46.6</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:82.5%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">82.5%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981在書目計量（Bibliometric）支柱總分63.89，整體表現中上。前向引用數（Forward Citation）與引用速度（Citation Velocity）normalized值分別達98.1與98.9，percentile均逾97%，顯示技術受業界高度關注且持續被引用。顛覆性指數（Disruptiveness Index）達84.4百分位，反映技術具突破性。然而通用性指數（Generality Index）與原創性指數（Originality Index）normalized值偏低（10.6/11.5），顯示技術應用領域集中且技術來源單一。審查員引用率（Examiner Citation Rate）percentile達82.5，但normalized值僅46.6，暗示審查過程可能影響專利穩定性。整體而言，專利商業價值受高引用率支撐，但技術廣度與原創性不足可能限制長期競爭力。</p>
+        <ul class="ai-points">
+          <li>前向引用數與引用速度表現卓越，percentile均逾97%，顯示技術影響力強</li>
+          <li>顛覆性指數達84.4百分位，反映技術具突破性但非漸進式改進</li>
+          <li>通用性與原創性指數偏低，技術應用領域集中且知識來源單一</li>
+          <li>審查員引用率percentile高但normalized值低，需關注專利穩定性風險</li>
+          <li>高引用率有利授權，但技術廣度不足可能限制商業化潛力</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P2" style="margin-bottom:32px;">
+    <div class="subsection-title">P2 法律強度（67.13）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P2.1</strong></td>
+            <td>專利家族規模
+            </td>
+            <td>5.00</td>
+            <td>88.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:88.3%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">88.3%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.2</strong></td>
+            <td>請求項數量
+            </td>
+            <td>28.00</td>
+            <td>92.3</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:92.1%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">92.1%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.3</strong></td>
+            <td>獨立請求項數量
+            </td>
+            <td>3.00</td>
+            <td>68.4</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:68.3%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">68.3%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.4</strong></td>
+            <td>法律狀態
+              <br><small style="color:var(--text-muted);">active</small>
+            </td>
+            <td>1.00</td>
+            <td>0.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:50.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">50.0%</span>
+              </div>
+            </td>
+            <td>0%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.5</strong></td>
+            <td>剩餘專利年限
+              <br><small style="color:var(--text-muted);">expiry=2036-03-18, PTA=0d</small>
+            </td>
+            <td>9.97</td>
+            <td>67.6</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:67.5%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">67.5%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.6</strong></td>
+            <td>維護費狀態
+              <br><small style="color:var(--text-muted);">active, status=granted</small>
+            </td>
+            <td>1.00</td>
+            <td>50.8</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:50.8%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">50.8%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.7</strong></td>
+            <td>接續/分割申請
+              <br><small style="color:var(--text-muted);">same-country members: 2</small>
+            </td>
+            <td>1.00</td>
+            <td>94.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:93.7%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">93.7%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P2.8</strong></td>
+            <td>審查歷程強度
+              <br><small style="color:var(--text-muted);">US patent, PTA=0 days</small>
+            </td>
+            <td>0.00</td>
+            <td>37.1</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:37.2%; background:#f97316;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">37.2%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981 在法律強度（Legal Strength）支柱得分 67.13，整體表現穩健且具備商業潛力。指標關聯顯示，高請求項數量（Claim Count, 92.1%）與延續申請（Continuation, 93.7%）高度相關，反映申請人積極擴張保護範圍。專利家族規模（Patent Family）達 5 件，顯示國際佈局廣泛，增強排他性。維護費正常繳納，確保權利持續有效。然而，審查歷程強度（Prosecution History）僅 0 次 Office Action，百分位 37.2%，為主要弱項；審查寬鬆可能意味著權利範圍未經嚴格挑戰，潛在不穩定性較高。剩餘專利年限約 10 年，法律狀態有效，適合中長期授權。綜合而言，佈局策略佳，但需評估侵權訴訟中的穩定性風險。</p>
+        <ul class="ai-points">
+          <li>專利家族（Patent Family）與請求項數量（Claim Count）表現優異，顯示廣泛佈局。</li>
+          <li>延續/分割申請（Continuation/Division）得分高，反映策略性布局強。</li>
+          <li>審查歷程（Prosecution History）較弱，缺乏 Office Action 挑戰，穩定性存疑。</li>
+          <li>剩餘年限約 10 年，法律狀態有效，具備中長期商業價值。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P3" style="margin-bottom:32px;">
+    <div class="subsection-title">P3 技術價值（57.86）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P3.1</strong></td>
+            <td>IPC 分類廣度
+              <br><small style="color:var(--text-muted);">subclasses: ['H04N']</small>
+            </td>
+            <td>1.00</td>
+            <td>29.7</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:29.8%; background:#f97316;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">29.8%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P3.2</strong></td>
+            <td>技術融合指數
+              <br><small style="color:var(--text-muted);">combo freq=67 in pool</small>
+            </td>
+            <td>0.16</td>
+            <td>18.1</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:18.3%; background:#ef4444;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">18.3%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P3.3</strong></td>
+            <td>發明人團隊規模
+            </td>
+            <td>3.00</td>
+            <td>57.1</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:57.1%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">57.1%</span>
+              </div>
+            </td>
+            <td>5%</td>
+          </tr>
+          <tr>
+            <td><strong>P3.4</strong></td>
+            <td>說明書深度
+              <br><small style="color:var(--text-muted);">desc=46973, figs=9</small>
+            </td>
+            <td>51473.00</td>
+            <td>91.8</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:91.5%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">91.5%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P3.5</strong></td>
+            <td>技術新穎性評估
+              <br><small style="color:var(--text-muted);">結合色表與間隔預測，針對深度影像有實質創新，非簡單組合。</small>
+            </td>
+            <td>7.00</td>
+            <td>94.2</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:94.0%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">94.0%</span>
+              </div>
+            </td>
+            <td>30%</td>
+          </tr>
+          <tr>
+            <td><strong>P3.6</strong></td>
+            <td>發明層級分類
+              <br><small style="color:var(--text-muted);">領域內創新，解決編碼效率與複雜度矛盾，需一定發明性思維。</small>
+            </td>
+            <td>3.00</td>
+            <td>59.3</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:59.3%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">59.3%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P3.7</strong></td>
+            <td>SEP 必要性
+              <br><small style="color:var(--text-muted);">missing raw data</small>
+            </td>
+            <td>—</td>
+            <td>0.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:50.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">50.0%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981 在技術價值（Technical Value）支柱得分 57.86，整體表現中等。顯著亮點在於技術新穎性（P3.5, 94.0%）與說明書深度（P3.4, 91.5%），顯示該專利在深度影像處理領域具備實質創新，且技術揭露詳盡，有利於侵權舉證與訴訟防禦。TRIZ 發明層級（P3.6）達 3 級，解決編碼效率與複雜度矛盾。然而，IPC 分類廣度（P3.1）與技術融合指數（P3.2）分數偏低，反映技術應用範圍較窄，跨領域整合性不足，易被設計繞過（Design Around）。此外，非標準必要專利（Non-SEP）限制了其標準授權潛力。整體而言，此專利適合技術防禦或特定產品授權，但商業擴張需考量保護範圍限制。</p>
+        <ul class="ai-points">
+          <li>技術新穎性與揭露深度極高：P3.5 與 P3.4 分數均逾 90%，顯示實質創新且說明書詳盡，利於訴訟防禦。</li>
+          <li>技術應用範圍較窄：P3.1 與 P3.2 分數偏低，IPC 單一且融合度低，商業場景受限且易被設計繞過。</li>
+          <li>缺乏標準必要專利地位：P3.7 為 Null，無 SEP 身份，限制了標準授權（Licensing）的強制性收益。</li>
+          <li>發明層級適中：TRIZ Level 3，屬領域內創新，需一定發明性思維解決編碼效率與複雜度矛盾。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P4" style="margin-bottom:32px;">
+    <div class="subsection-title">P4 市場覆蓋（71.08）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P4.1</strong></td>
+            <td>家族地理廣度
+              <br><small style="color:var(--text-muted);">countries: ['CN', 'EP', 'KR', 'US', 'WO']</small>
+            </td>
+            <td>5.00</td>
+            <td>92.9</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:92.6%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">92.6%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P4.2</strong></td>
+            <td>GDP 加權市場覆蓋
+              <br><small style="color:var(--text-muted);">GDP sum=70783B / 109530B</small>
+            </td>
+            <td>0.65</td>
+            <td>93.4</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:93.2%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">93.2%</span>
+              </div>
+            </td>
+            <td>30%</td>
+          </tr>
+          <tr>
+            <td><strong>P4.3</strong></td>
+            <td>三方專利指標
+              <br><small style="color:var(--text-muted);">has US=True, EP=True, JP=False</small>
+            </td>
+            <td>0.00</td>
+            <td>1.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:47.0%; background:#f97316;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">47.0%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P4.4</strong></td>
+            <td>關鍵市場命中率
+              <br><small style="color:var(--text-muted);">4/5 markets</small>
+            </td>
+            <td>0.80</td>
+            <td>94.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:94.3%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">94.3%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P4.5</strong></td>
+            <td>新興市場佈局
+              <br><small style="color:var(--text-muted);">emerging markets: ['CN']</small>
+            </td>
+            <td>1.00</td>
+            <td>66.2</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:66.1%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">66.1%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981 在市場覆蓋 (Market Coverage) 支柱得分 71.08 分，整體表現中等偏上。數據顯示，該專利在 GDP 加權市場覆蓋 (GDP Weighted Market Coverage) 與關鍵市場命中率 (Key Market Hit Rate) 表現優異，分別達 93.4 與 94.5 標準分，顯示其佈局聚焦於高經濟價值區域。然而，三方專利指標 (Triadic Patent Indicator) 僅 1.5 分，且原始值為 0，意味著缺乏 US、EP、JP 同時申請的結構，這可能限制其在國際訴訟或授權談判中的議價能力。新興市場佈局 (Emerging Market Layout) 亦相對保守。建議關注是否因成本考量而未進行全區域佈局，此為潛在風險點。</p>
+        <ul class="ai-points">
+          <li>整體市場覆蓋得分 71.08，顯示專利具備一定商業潛力。</li>
+          <li>GDP 加權與關鍵市場命中率極高，聚焦美、中、歐、日、韓核心經濟體。</li>
+          <li>三方專利指標 (Triadic Patent Indicator) 顯著偏低，缺乏 US+EP+JP 同時申請記錄。</li>
+          <li>新興市場佈局 (Emerging Market Layout) 僅覆蓋 1 國，成長性佈局不足。</li>
+          <li>建議評估未申請三方專利之原因，以釐清授權或侵權訴訟風險。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P5" style="margin-bottom:32px;">
+    <div class="subsection-title">P5 文本品質（50.03）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P5.1</strong></td>
+            <td>請求項明確性
+              <br><small style="color:var(--text-muted);">用語清晰，技術特徵明確，無模糊詞彙，語法結構規範。</small>
+            </td>
+            <td>8.00</td>
+            <td>81.6</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:81.4%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">81.4%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.2</strong></td>
+            <td>說明書支撐度
+              <br><small style="color:var(--text-muted);">說明書詳細描述各請求項元素，包含多種實施例與替代方案，圖文對應良好，支撐充分。</small>
+            </td>
+            <td>9.00</td>
+            <td>64.6</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:64.5%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">64.5%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.3</strong></td>
+            <td>功能性語言比例
+              <br><small style="color:var(--text-muted);">以具體步驟描述為主，無典型 means-plus-function 結構，功能性語言比例適中。</small>
+            </td>
+            <td>8.00</td>
+            <td>79.1</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:79.0%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">79.0%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.4</strong></td>
+            <td>多重附屬效率
+              <br><small style="color:var(--text-muted);">附屬項多為單重依賴，缺乏多重依賴設計，組合覆蓋效率較低。</small>
+            </td>
+            <td>5.00</td>
+            <td>0.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:0.8%; background:#ef4444;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">0.8%</span>
+              </div>
+            </td>
+            <td>8%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.5</strong></td>
+            <td>Claim Scope 寬度
+              <br><small style="color:var(--text-muted);">限定條件包含特定編碼模式與轉換邏輯，範圍適中，非高度抽象。</small>
+            </td>
+            <td>6.00</td>
+            <td>52.7</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:52.7%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">52.7%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.6</strong></td>
+            <td>Claim 層次結構完整性
+              <br><small style="color:var(--text-muted);">包含編碼與解碼方法及裝置，結構完整，具備基本防禦縱深。</small>
+            </td>
+            <td>7.00</td>
+            <td>16.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:16.7%; background:#ef4444;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">16.7%</span>
+              </div>
+            </td>
+            <td>12%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.7</strong></td>
+            <td>多語言一致性
+              <br><small style="color:var(--text-muted);">missing raw data</small>
+            </td>
+            <td>—</td>
+            <td>0.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:50.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">50.0%</span>
+              </div>
+            </td>
+            <td>10%</td>
+          </tr>
+          <tr>
+            <td><strong>P5.8</strong></td>
+            <td>說明書品質綜合
+              <br><small style="color:var(--text-muted);">揭露充分，邏輯連貫，術語一致，圖表與文字配合良好，符合專利法實施要求。</small>
+            </td>
+            <td>9.00</td>
+            <td>68.4</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:68.3%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">68.3%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981 在文本品質 (Text Quality) 支柱得分 50.03，整體表現處於中等水準。其優勢在於請求項明確性 (Claim Clarity) 與說明書品質 (Specification Quality) 分數顯著，顯示專利文件撰寫規範，技術特徵清晰，利於通過審查並維持有效性。然而，多重附屬效率 (Dependent Claim Efficiency) 僅 0.8% 百分位，顯示附屬項多為單重依賴，缺乏組合覆蓋，導致 Claim 層次結構 (Claim Hierarchy) 防禦縱深不足。此結構雖保障授權穩定性，但可能限制商業授權時的談判彈性與侵權舉證範圍。建議後續佈局時強化附屬項的交叉引用設計，以提升保護網密度，避免競爭對手輕易繞道設計。</p>
+        <ul class="ai-points">
+          <li>整體文本品質達中等水準，明確性與說明書支撐度表現優異。</li>
+          <li>請求項用語清晰，功能性語言適中，降低審查與無效風險。</li>
+          <li>多重附屬依賴設計不足，導致保護範圍組合彈性受限。</li>
+          <li>層次結構防禦縱深較弱，需留意競爭對手繞道設計。</li>
+          <li>說明書揭露充分，符合法規合規要求，利於國際佈局。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P6" style="margin-bottom:32px;">
+    <div class="subsection-title">P6 網路中心（82.62）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P6.1</strong></td>
+            <td>PageRank 中心性
+            </td>
+            <td>0.01</td>
+            <td>98.1</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:97.8%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">97.8%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+          <tr>
+            <td><strong>P6.2</strong></td>
+            <td>中介中心性
+            </td>
+            <td>0.00</td>
+            <td>96.2</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:95.9%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">95.9%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+          <tr>
+            <td><strong>P6.3</strong></td>
+            <td>Hub/Authority 分數
+            </td>
+            <td>0.00</td>
+            <td>86.3</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:86.1%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">86.1%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+          <tr>
+            <td><strong>P6.4</strong></td>
+            <td>社群橋接位置
+            </td>
+            <td>0.00</td>
+            <td>50.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:50.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">50.0%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981 在「網路中心 (Network-Centric)」支柱展現優異表現，總分 82.62 分，顯示該專利在技術引用網路中佔據核心地位。關鍵指標中，PageRank 中心性 (PageRank Centrality) 與中介中心性 (Betweenness Centrality) 分別位於 97.8% 與 95.9% 分位，代表其不僅被廣泛引用，更扮演著技術資訊傳遞的橋樑角色。Hub/Authority 分數達 86.1%，進一步確認其專業權威性。然而，社群橋接位置 (Community Bridge) 僅 50%，顯示跨領域連結能力相對薄弱。此結構對專利授權 (Licensing) 具高度價值，因核心地位穩固易於談判；但商業化拓展時，可能面臨技術領域封閉的風險。整體而言，該專利是技術網路中的關鍵節點，但需留意跨社群滲透力不足的限制。</p>
+        <ul class="ai-points">
+          <li>整體網路中心性 (Network-Centric) 總分 82.62，表現卓越。</li>
+          <li>PageRank 與中介中心性 (Betweenness Centrality) 分位高於 95%，引用影響力強。</li>
+          <li>社群橋接位置 (Community Bridge) 僅 50%，跨領域連結能力薄弱。</li>
+          <li>專利授權 (Licensing) 價值高，因核心地位穩固且具權威性。</li>
+          <li>商業化風險在於技術領域封閉，跨社群滲透力不足。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P7" style="margin-bottom:32px;">
+    <div class="subsection-title">P7 授權潛力（61.71）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P7.1</strong></td>
+            <td>侵權可偵測性
+              <br><small style="color:var(--text-muted);">方法專利，內部編解碼邏輯難以直接觀測，需透過位元流分析或逆向工程確認。</small>
+            </td>
+            <td>4.00</td>
+            <td>53.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:53.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">53.0%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P7.2</strong></td>
+            <td>迴避設計難度
+              <br><small style="color:var(--text-muted);">核心為特定編碼模式，競爭者可改用標準預測或避免色板編碼來迴避，但可能影響效率。</small>
+            </td>
+            <td>5.00</td>
+            <td>37.4</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:37.4%; background:#f97316;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">37.4%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P7.3</strong></td>
+            <td>損害賠償基礎
+              <br><small style="color:var(--text-muted);">視訊編碼為核心技術，但此為特定模式，需視是否為標準必要專利來確定賠償基數。</small>
+            </td>
+            <td>6.00</td>
+            <td>75.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:75.4%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">75.4%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P7.4</strong></td>
+            <td>授權歷史信號
+              <br><small style="color:var(--text-muted);">視訊壓縮領域授權市場活躍，多家公司有相關專利授權計畫與交易。</small>
+            </td>
+            <td>8.00</td>
+            <td>74.7</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:74.6%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">74.6%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P7.5</strong></td>
+            <td>專利叢林密度
+              <br><small style="color:var(--text-muted);">IPC3=H04, pool_count=95</small>
+            </td>
+            <td>95.00</td>
+            <td>74.2</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:74.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">74.0%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P7.6</strong></td>
+            <td>阻斷位置指數
+              <br><small style="color:var(--text-muted);">P1.7_norm=46.6*0.6 + P6.2_norm=96.2*0.4</small>
+            </td>
+            <td>66.43</td>
+            <td>66.4</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:87.7%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">87.7%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>專利 US10148981 在授權潛力 (Grant Potential) 支柱得分 61.71，屬中等水準。雖具備高商業價值基礎 (Damages Basis 75.5) 與活躍授權市場 (Licensing History 74.7)，但侵權可偵測性 (Infringement Detectability) 僅 53.0，且迴避設計難度 (Design Around Difficulty) 偏低 (37.4)，顯示競爭者易透過替代編碼繞過。然而，阻斷位置指數 (Blocking Position Index) 達 87.7 百分位，顯示技術位於發展必經路徑。整體而言，此專利具備授權交易基礎，但執行風險較高，需結合標準必要專利 (SEP) 地位強化談判籌碼。</p>
+        <ul class="ai-points">
+          <li>整體授權潛力中等，商業價值與市場接受度良好，但執行風險存在挑戰。</li>
+          <li>侵權偵測性與迴避設計難度較低，顯示方法專利特性導致舉證不易且易被繞過。</li>
+          <li>阻斷位置指數 (Blocking Position Index) 表現突出，技術位於關鍵路徑，具戰略價值。</li>
+          <li>視訊壓縮領域授權活躍，有利於建立授權策略，但需確認是否為標準必要專利 (SEP)。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="sec-P8" style="margin-bottom:32px;">
+    <div class="subsection-title">P8 前瞻價值（47.87）</div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th style="width:60px">指標</th><th>名稱</th><th style="width:80px">原始值</th><th style="width:90px">正規化</th><th style="width:120px">百分位</th><th style="width:50px">權重</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>P8.1</strong></td>
+            <td>技術成熟度
+              <br><small style="color:var(--text-muted);">申請於 2016 年，屬成熟視訊編碼領域，相關技術已融入標準。</small>
+            </td>
+            <td>8.00</td>
+            <td>62.6</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:62.6%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">62.6%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P8.2</strong></td>
+            <td>引用趨勢斜率
+              <br><small style="color:var(--text-muted);">yearly: {2022: 3, 2023: 9, 2024: 7, 2025: 8, 2026: 0}</small>
+            </td>
+            <td>-0.70</td>
+            <td>6.5</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:83.9%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">83.9%</span>
+              </div>
+            </td>
+            <td>20%</td>
+          </tr>
+          <tr>
+            <td><strong>P8.3</strong></td>
+            <td>產業採用度
+              <br><small style="color:var(--text-muted);">視訊編碼標準已廣泛採用色表編碼，此技術屬標準內優化，主流採用。</small>
+            </td>
+            <td>7.00</td>
+            <td>56.0</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:56.0%; background:#eab308;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">56.0%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+          <tr>
+            <td><strong>P8.4</strong></td>
+            <td>專利年齡效益
+              <br><small style="color:var(--text-muted);">velocity=2.9922, age=10.0y, decay=0.3669</small>
+            </td>
+            <td>8.15</td>
+            <td>97.3</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:97.0%; background:#22c55e;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">97.0%</span>
+              </div>
+            </td>
+            <td>15%</td>
+          </tr>
+          <tr>
+            <td><strong>P8.5</strong></td>
+            <td>未來應用潛力
+              <br><small style="color:var(--text-muted);">適用於 VR/AR 深度影像，但屬成熟壓縮技術，跨領域擴展潛力有限。</small>
+            </td>
+            <td>5.00</td>
+            <td>34.3</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <div class="pctl-bar" style="flex:1;">
+                  <div class="pctl-bar-fill" style="width:34.4%; background:#f97316;"></div>
+                </div>
+                <span style="font-size:12px; min-width:40px;">34.4%</span>
+              </div>
+            </td>
+            <td>25%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="ai-insight" style="margin-top:16px;">
+        <strong>AI 分析：</strong>
+        <p>US10148981 在「前瞻價值」(Forward-Looking Value) 支柱得分 47.87，整體表現中等偏低。該專利屬於 2016 年申請的視訊編碼技術，技術成熟度 (Technology Maturity) 與產業採用度 (Industry Adoption) 分別達 62.6% 與 56.0%，顯示其已融入標準並被廣泛應用，具備穩定的商業基礎。然而，指標間呈現「成熟但受限」的特徵：專利年齡效益 (Patent Age Benefit) 高達 97.3%，證明技術生命周期長且價值穩定；但未來應用潛力 (Future Application Potential) 僅 34.4%，反映技術難以擴展至 VR/AR 等新領域，成長天花板明顯。
+
+對授權 (Licensing) 而言，此專利適合現有生態系內的技術佈局，因產業採用度高。但對長期投資而言，引用趨勢斜率 (Citation Trend Slope) 雖百分位優異，原始值卻為負，暗示近期引用動能可能減弱。整體而言，該專利價值在於「穩健」而非「爆發」，適合追求穩定授權收益，但需警惕技術迭代帶來的替代風險。</p>
+        <ul class="ai-points">
+          <li>整體得分 47.87 分，反映技術成熟但成長潛力有限。</li>
+          <li>專利年齡效益 (Patent Age Benefit) 達 97.3%，顯示技術壽命長且價值穩定。</li>
+          <li>未來應用潛力 (Future Application Potential) 僅 34.4%，受限於成熟壓縮技術的擴展性。</li>
+          <li>產業採用度高，適合現有生態系內的授權 (Licensing) 佈局。</li>
+          <li>引用趨勢原始值為負，需留意近期引用動能減弱的風險。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 強項 Top 10 -->
+<div class="section" id="sec-top10">
+  <div class="section-title">4. 強項亮點（Top 10）</div>
+  <div class="card">
+    <div id="top10-chart" class="chart-container chart-sm"></div>
+    <table style="margin-top:16px;">
+      <thead>
+        <tr><th>#</th><th>指標</th><th>名稱</th><th>百分位</th><th>原始值</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>P1.2</strong></td>
+          <td>引用速度</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">98.6%</span>
+          </td>
+          <td>2.99</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>P1.1</strong></td>
+          <td>前向引用數</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">97.8%</span>
+          </td>
+          <td>30.00</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>P6.1</strong></td>
+          <td>PageRank 中心性</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">97.8%</span>
+          </td>
+          <td>0.01</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>P8.4</strong></td>
+          <td>專利年齡效益</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">97.0%</span>
+          </td>
+          <td>8.15</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>P6.2</strong></td>
+          <td>中介中心性</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">95.9%</span>
+          </td>
+          <td>0.00</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>P4.4</strong></td>
+          <td>關鍵市場命中率</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">94.3%</span>
+          </td>
+          <td>0.80</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>P3.5</strong></td>
+          <td>技術新穎性評估</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">94.0%</span>
+          </td>
+          <td>7.00</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>P2.7</strong></td>
+          <td>接續/分割申請</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">93.7%</span>
+          </td>
+          <td>1.00</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>P4.2</strong></td>
+          <td>GDP 加權市場覆蓋</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">93.2%</span>
+          </td>
+          <td>0.65</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>P4.1</strong></td>
+          <td>家族地理廣度</td>
+          <td>
+            <span class="pctl-tag pctl-tag-green">92.6%</span>
+          </td>
+          <td>5.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ai-insight">
+    <strong>AI 分析：</strong>
+    <p>此專利組合展現高度授權價值，關鍵在於技術影響力、市場覆蓋與法律穩定性三大維度。引用速度（Citation Velocity）與前向引用數（Forward Citations）反映技術被產業快速採納，PageRank中心性（PageRank Centrality）顯示其在技術網絡中的樞紐地位。專利年齡效益（Patent Age Effectiveness）與中介中心性（Betweenness Centrality）證明技術生命週期長且具跨領域連結力。市場指標（關鍵市場命中率、GDP加權覆蓋、家族地理廣度）顯示全球商業化潛力，技術新穎性（Technical Novelty Assessment）則強化不可替代性。</p>
+    <ul class="ai-points">
+      <li>引用速度（Citation Velocity）98.6百分位：技術被快速驗證，可作為授權費率上浮依據</li>
+      <li>前向引用數（Forward Citations）30次：奠定技術標準基礎，談判時強調行業依賴性</li>
+      <li>PageRank中心性（PageRank Centrality）：技術生態關鍵節點，提高替代難度</li>
+      <li>專利年齡效益（Patent Age Effectiveness）：長期收益潛力，適合長期授權協議</li>
+      <li>市場覆蓋（Market Coverage）：4/5關鍵市場+GDP加權70.7%，鎖定高價值區域</li>
+      <li>技術新穎性（Technical Novelty）：深度影像領域實質創新，主張技術壁壘</li>
+      <li>家族地理廣度（Patent Family Breadth）：5國布局，強化全球保護範圍</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 5. 弱項 Bottom 10 -->
+<div class="section" id="sec-bottom10">
+  <div class="section-title">5. 風險與弱項（Bottom 10）</div>
+  <div class="card">
+    <div id="bottom10-chart" class="chart-container chart-sm"></div>
+    <table style="margin-top:16px;">
+      <thead>
+        <tr><th>#</th><th>指標</th><th>名稱</th><th>百分位</th><th>原始值</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>P6.4</strong></td>
+          <td>社群橋接位置</td>
+          <td>
+            <span class="pctl-tag pctl-tag-yellow">
+              50.0%
+            </span>
+          </td>
+          <td>0.00</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>P4.3</strong></td>
+          <td>三方專利指標</td>
+          <td>
+            <span class="pctl-tag pctl-tag-orange">
+              47.0%
+            </span>
+          </td>
+          <td>0.00</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>P7.2</strong></td>
+          <td>迴避設計難度</td>
+          <td>
+            <span class="pctl-tag pctl-tag-orange">
+              37.4%
+            </span>
+          </td>
+          <td>5.00</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>P2.8</strong></td>
+          <td>審查歷程強度</td>
+          <td>
+            <span class="pctl-tag pctl-tag-orange">
+              37.2%
+            </span>
+          </td>
+          <td>0.00</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>P8.5</strong></td>
+          <td>未來應用潛力</td>
+          <td>
+            <span class="pctl-tag pctl-tag-orange">
+              34.4%
+            </span>
+          </td>
+          <td>5.00</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>P3.1</strong></td>
+          <td>IPC 分類廣度</td>
+          <td>
+            <span class="pctl-tag pctl-tag-orange">
+              29.8%
+            </span>
+          </td>
+          <td>1.00</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>P1.4</strong></td>
+          <td>原創性指數</td>
+          <td>
+            <span class="pctl-tag pctl-tag-orange">
+              26.2%
+            </span>
+          </td>
+          <td>0.00</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><strong>P3.2</strong></td>
+          <td>技術融合指數</td>
+          <td>
+            <span class="pctl-tag pctl-tag-red">
+              18.3%
+            </span>
+          </td>
+          <td>0.16</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><strong>P5.6</strong></td>
+          <td>Claim 層次結構完整性</td>
+          <td>
+            <span class="pctl-tag pctl-tag-red">
+              16.7%
+            </span>
+          </td>
+          <td>7.00</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><strong>P5.4</strong></td>
+          <td>多重附屬效率</td>
+          <td>
+            <span class="pctl-tag pctl-tag-red">
+              0.8%
+            </span>
+          </td>
+          <td>5.00</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ai-insight">
+    <strong>AI 分析：</strong>
+    <p>本專利（US10148981）涉及視訊編碼領域（H04N），整體風險評估顯示其專利強度與商業價值偏低。核心風險在於技術領域已趨成熟（Mature Technology），導致未來應用潛力（Future Application Potential）受限，且核心編碼模式易被競爭對手透過標準預測或替代色板編碼進行迴避設計（Design Around）。此外，請求項結構（Claim Structure）存在顯著弱點，特別是多重附屬請求項（Multiple Dependent Claims）效率極低（P5.4 僅 0.8%），這將嚴重削弱在侵權訴訟（Litigation）中的談判籌碼與保護範圍。全球佈局（Triadic Patent Indicator）亦僅涵蓋美、歐，缺乏日本市場保護。建議透過專利組合（Patent Portfolio）整合、持續申請（Continuation）或聚焦特定利基市場（Niche Market）來緩解風險。</p>
+    <ul class="ai-points">
+      <li>技術成熟度高，易被迴避設計（Design Around）：核心為特定編碼模式，競爭者可改用標準預測技術，建議監控替代技術發展。</li>
+      <li>請求項結構薄弱，缺乏多重依賴：P5.4 分數極低，建議透過新申請案補充複雜依賴關係，增強防禦縱深。</li>
+      <li>全球佈局不足：僅有 US/EP，缺乏 JP 保護，若目標市場包含亞洲，需評估補償性申請。</li>
+      <li>專利價值有限，建議組合策略：單件專利價值偏低，建議與相關專利組合成防禦性組合（Defensive Portfolio）以提升授權談判力。</li>
+      <li>聚焦利基市場應用：雖跨領域潛力有限，但可專注於 VR/AR 深度影像等特定場景進行商業化或訴訟。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 6. 跨方案穩定性 -->
+<div class="section" id="sec-cross">
+  <div class="section-title">6. 跨方案穩定性分析</div>
+  <div class="card">
+    <div id="cross-chart" class="chart-container chart-sm"></div>
+  </div>
+
+  <div class="ai-insight">
+    <strong>AI 分析：</strong>
+    <p>專利 US10148981 在五套評估方案中均展現卓越之穩定性 (Stability)，所有百分位 (Percentile) 皆位於 97% 以上，顯示其為高品質核心資產。其中「授權導向 (Licensing Oriented)」與「授權 (Licensing)」百分位最高 (98.35%)，代表商業變現潛力極強；「技術佈局 (Portfolio Strategy)」之專利穩定性分數 (PSS) 達 64.46 為最高，顯示其作為防禦性技術壁壘之堅固度最佳。該專利同時具備高訴訟強度 (Litigation Strength) 與投資併購 (Investment/M&A) 價值，最適合作為授權變現之標的，或納入核心專利組合以強化市場競爭地位。</p>
+    <ul class="ai-points">
+      <li>五維度百分位均高於 97%，顯示專利穩定性 (Patent Stability) 極高</li>
+      <li>授權 (Licensing) 相關指標百分位達 98.35%，商業化潛力最佳</li>
+      <li>技術佈局 (Portfolio Strategy) PSS 分數 64.46 為最高，適合長期防禦佈局</li>
+      <li>訴訟強度 (Litigation) 與投資價值 (Investment Value) 亦處於頂尖水準</li>
+      <li>建議優先用於授權變現或作為併購 (M&A) 中的高價值標的</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 7. 綜合評估 -->
+<div class="section" id="sec-overall">
+  <div class="section-title">7. 綜合評估與行動建議</div>
+  <div class="card">
+    <p style="line-height:1.8;">1) 總體評價：此專利在五套評估方案中均展現卓越穩定性，屬高百分位 (98.35%) 核心資產，具備極強之授權變現潛力與訴訟防禦價值，為高品質技術壁壘。
+2) 授權策略建議：適合採「非排他性授權 (Non-exclusive Licensing)」或「交叉授權 (Cross-licensing)」模式，目標市場鎖定高市場覆蓋率 (Market Coverage) 之成熟科技產業。
+3) 組合搭配建議：建議與「前瞻價值 (Forward Value)」較高之新世代專利搭配，以補足未來應用潛力；或與「法律強度 (Legal Strength)」更強之專利組合 (Portfolio)，強化防禦。
+4) 風險提醒：需注意「迴避設計難度 (Design Around Difficulty)」偏低，競爭者易繞過；且「審查歷程強度 (Prosecution History Strength)」較弱，可能面臨有效性挑戰 (Validity Challenge)。</p>
+    <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+      <strong>行動建議：</strong>
+      <ol style="margin-top:8px; padding-left:20px;">
+        <li style="margin-bottom:8px;">高百分位 (98.35%) 核心資產，穩定性卓越</li>
+        <li style="margin-bottom:8px;">授權變現與訴訟防禦價值強，適合商業變現</li>
+        <li style="margin-bottom:8px;">建議交叉授權 (Cross-licensing) 與非排他授權</li>
+        <li style="margin-bottom:8px;">需警惕迴避設計 (Design Around) 與審查歷程風險</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  本報告由 PSS（Patent Strength Score）系統自動產生。AI 生成內容僅供參考，不構成法律或商業建議。
+</div>
+
+</div><!-- .content -->
+</div><!-- .main -->
+</div><!-- .layout -->
+
+<script>
+// ── 雷達圖 ──
+(function(){
+  var chart = echarts.init(document.getElementById('radar-chart'));
+  var pillars = ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8"];
+  var names = {"P1": "\u66f8\u76ee\u8a08\u91cf", "P2": "\u6cd5\u5f8b\u5f37\u5ea6", "P3": "\u6280\u8853\u50f9\u503c", "P4": "\u5e02\u5834\u8986\u84cb", "P5": "\u6587\u672c\u54c1\u8cea", "P6": "\u7db2\u8def\u4e2d\u5fc3", "P7": "\u6388\u6b0a\u6f5b\u529b", "P8": "\u524d\u77bb\u50f9\u503c"};
+  var scores = [
+    63.89,
+    67.13,
+    57.86,
+    71.08,
+    50.03,
+    82.62,
+    61.71,
+    47.87
+  ];
+  chart.setOption({
+    title: { text: '八大支柱雷達圖', left: 'center', textStyle: { fontSize: 16, color: '#1e3a5f' }},
+    tooltip: {},
+    radar: {
+      indicator: pillars.map(function(p, i){ return { name: p + ' ' + names[p], max: 100 }; }),
+      shape: 'circle',
+      splitNumber: 4,
+      axisName: { color: '#1e3a5f', fontSize: 12 },
+    },
+    series: [{
+      type: 'radar',
+      data: [{
+        value: scores,
+        name: 'US10148981',
+        areaStyle: { opacity: 0.25 },
+        lineStyle: { width: 2 },
+        itemStyle: { color: '#2d5f8a' },
+      }],
+    }],
+  });
+  window.addEventListener('resize', function(){ chart.resize(); });
+})();
+
+// ── Top 10 水平 bar ──
+(function(){
+  var chart = echarts.init(document.getElementById('top10-chart'));
+  var items = [
+    { name: 'P4.1 家族地理廣度', value: 92.6 },
+    { name: 'P4.2 GDP 加權市場覆蓋', value: 93.2 },
+    { name: 'P2.7 接續/分割申請', value: 93.7 },
+    { name: 'P3.5 技術新穎性評估', value: 94.0 },
+    { name: 'P4.4 關鍵市場命中率', value: 94.3 },
+    { name: 'P6.2 中介中心性', value: 95.9 },
+    { name: 'P8.4 專利年齡效益', value: 97.0 },
+    { name: 'P6.1 PageRank 中心性', value: 97.8 },
+    { name: 'P1.1 前向引用數', value: 97.8 },
+    { name: 'P1.2 引用速度', value: 98.6 }
+  ];
+  chart.setOption({
+    title: { text: '強項指標百分位', left: 'center', textStyle: { fontSize: 14, color: '#1e3a5f' }},
+    tooltip: { formatter: '{b}: {c}%' },
+    grid: { left: 160, right: 40, top: 40, bottom: 20 },
+    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%' }},
+    yAxis: { type: 'category', data: items.map(function(d){ return d.name; }) },
+    series: [{
+      type: 'bar',
+      data: items.map(function(d){
+        return { value: d.value, itemStyle: { color: d.value >= 75 ? '#22c55e' : '#eab308' }};
+      }),
+      barWidth: 16,
+      label: { show: true, position: 'right', formatter: '{c}%', fontSize: 11 },
+    }],
+  });
+  window.addEventListener('resize', function(){ chart.resize(); });
+})();
+
+// ── Bottom 10 水平 bar ──
+(function(){
+  var chart = echarts.init(document.getElementById('bottom10-chart'));
+  var items = [
+    { name: 'P5.4 多重附屬效率', value: 0.8 },
+    { name: 'P5.6 Claim 層次結構完整性', value: 16.7 },
+    { name: 'P3.2 技術融合指數', value: 18.3 },
+    { name: 'P1.4 原創性指數', value: 26.2 },
+    { name: 'P3.1 IPC 分類廣度', value: 29.8 },
+    { name: 'P8.5 未來應用潛力', value: 34.4 },
+    { name: 'P2.8 審查歷程強度', value: 37.2 },
+    { name: 'P7.2 迴避設計難度', value: 37.4 },
+    { name: 'P4.3 三方專利指標', value: 47.0 },
+    { name: 'P6.4 社群橋接位置', value: 50.0 }
+  ];
+  chart.setOption({
+    title: { text: '弱項指標百分位', left: 'center', textStyle: { fontSize: 14, color: '#1e3a5f' }},
+    tooltip: { formatter: '{b}: {c}%' },
+    grid: { left: 160, right: 40, top: 40, bottom: 20 },
+    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%' }},
+    yAxis: { type: 'category', data: items.map(function(d){ return d.name; }) },
+    series: [{
+      type: 'bar',
+      data: items.map(function(d){
+        var c = d.value < 25 ? '#ef4444' : (d.value < 50 ? '#f97316' : '#eab308');
+        return { value: d.value, itemStyle: { color: c }};
+      }),
+      barWidth: 16,
+      label: { show: true, position: 'right', formatter: '{c}%', fontSize: 11 },
+    }],
+  });
+  window.addEventListener('resize', function(){ chart.resize(); });
+})();
+
+// ── 五方案對比 bar ──
+(function(){
+  var chart = echarts.init(document.getElementById('cross-chart'));
+  var profiles = ["licensing_oriented", "licensing", "litigation", "investment", "portfolio_strategy"];
+  var profileNames = {"investment": "\u6295\u8cc7/\u4f75\u8cfc", "licensing": "\u6388\u6b0a\u5c0e\u5411\uff08\u5c08\u5bb6\u7248\uff09", "licensing_oriented": "\u6388\u6b0a\u5c0e\u5411\uff08\u539f\u59cb\u7248\uff09", "litigation": "\u8a34\u8a1f\u5f37\u5ea6", "portfolio_strategy": "\u6280\u8853\u4f48\u5c40"};
+  var data = {
+    'licensing_oriented': { pss: 62.17, rank: 4, pctl: 98.3 },
+    'licensing': { pss: 62.04, rank: 4, pctl: 98.3 },
+    'litigation': { pss: 62.17, rank: 6, pctl: 97.2 },
+    'investment': { pss: 61.85, rank: 5, pctl: 97.8 },
+    'portfolio_strategy': { pss: 64.46, rank: 5, pctl: 97.8 },
+  };
+  var names = profiles.map(function(p){ return profileNames[p] || p; });
+  var pssValues = profiles.map(function(p){ return data[p] ? data[p].pss : 0; });
+  var ranks = profiles.map(function(p){ return data[p] ? data[p].rank : 0; });
+
+  chart.setOption({
+    title: { text: '五套方案 PSS 比較', left: 'center', textStyle: { fontSize: 14, color: '#1e3a5f' }},
+    tooltip: {
+      formatter: function(p){ return p.name + '<br>PSS: ' + p.value + '<br>排名: #' + ranks[p.dataIndex]; }
+    },
+    grid: { left: 20, right: 20, top: 50, bottom: 40, containLabel: true },
+    xAxis: { type: 'category', data: names, axisLabel: { fontSize: 11, interval: 0 }},
+    yAxis: { type: 'value', min: function(v){ return Math.floor(v.min - 2); }, max: function(v){ return Math.ceil(v.max + 2); }},
+    series: [{
+      type: 'bar',
+      data: pssValues.map(function(v, i){
+        return {
+          value: v,
+          itemStyle: { color: profiles[i] === 'licensing_oriented' ? '#1e3a5f' : '#94a3b8' },
+        };
+      }),
+      barWidth: 40,
+      label: {
+        show: true, position: 'top',
+        formatter: function(p){ return p.value + '\n#' + ranks[p.dataIndex]; },
+        fontSize: 12,
+      },
+    }],
+  });
+  window.addEventListener('resize', function(){ chart.resize(); });
+})();
+</script>
+</body>
+</html>
