@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰然策略解密 — 公司簡介 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy: #1a365d;
+    --navy-light: #2a4a7f;
+    --navy-dark: #0f2240;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --white: #ffffff;
+    --gray-50: #f8fafc;
+    --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0;
+    --gray-400: #94a3b8;
+    --gray-600: #475569;
+    --gray-800: #1e293b;
+  }
+
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    color: var(--gray-800);
+  }
+
+  body {
+    background: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* Slide base */
+  .slide {
+    width: 100%;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding: 3rem 4rem 4rem;
+  }
+
+  .slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Footer */
+  .slide-footer {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+    letter-spacing: 0.02em;
+  }
+
+  .slide-footer.light {
+    border-top-color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ===== Slide 1: Cover ===== */
+  .slide--cover {
+    background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 50%, var(--navy-light) 100%);
+    color: var(--white);
+    text-align: center;
+  }
+
+  .slide--cover .slide-content {
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .cover-title {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    line-height: 1.2;
+  }
+
+  .cover-subtitle {
+    font-size: 1.4rem;
+    font-weight: 300;
+    color: var(--accent-light);
+    letter-spacing: 0.08em;
+  }
+
+  .cover-tagline {
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.8);
+    max-width: 700px;
+    line-height: 1.7;
+    margin-top: 1rem;
+    padding: 1rem 2rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .cover-bottom {
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.2em;
+    font-weight: 300;
+  }
+
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin: 0.5rem auto;
+  }
+
+  /* ===== Slide headers ===== */
+  .slide-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .slide-header h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1.3;
+  }
+
+  .slide-header h2 .em-dash {
+    color: var(--accent);
+  }
+
+  .slide-header .header-line {
+    display: block;
+    width: 50px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-top: 0.8rem;
+  }
+
+  /* ===== Slide 2: Pain Points ===== */
+  .pain-points {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+  }
+
+  .pain-card {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.8rem 2rem;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border-left: 4px solid var(--navy);
+    transition: box-shadow 0.2s;
+  }
+
+  .pain-card:hover {
+    box-shadow: 0 4px 20px rgba(26,54,93,0.08);
+  }
+
+  .pain-icon {
+    font-size: 2.2rem;
+    flex-shrink: 0;
+    width: 3rem;
+    text-align: center;
+  }
+
+  .pain-body h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+
+  .pain-body p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--gray-600);
+  }
+
+  /* ===== Slide 3: Solution ===== */
+  .solution-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-600);
+    margin-top: 0.4rem;
+    font-weight: 400;
+  }
+
+  .solution-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .solution-col {
+    padding: 2rem;
+    border-radius: 12px;
+    background: var(--gray-50);
+    border-top: 4px solid var(--navy);
+  }
+
+  .solution-col h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+  }
+
+  .solution-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .solution-col ul li {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: var(--gray-600);
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .solution-col ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* ===== Slide 4: Competitive Advantage ===== */
+  .advantages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .advantage-card {
+    padding: 2rem 1.8rem;
+    border-radius: 12px;
+    background: var(--gray-50);
+    border-bottom: 4px solid var(--accent);
+    text-align: center;
+  }
+
+  .advantage-card .adv-icon {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .advantage-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .advantage-card p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--gray-600);
+  }
+
+  /* ===== Slide 5: Team ===== */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .metric-box {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem 1.2rem;
+    text-align: center;
+  }
+
+  .metric-box .metric-label {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .metric-box .metric-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .metrics-grid .metric-box:nth-child(4) { grid-column: 1 / 2; }
+  .metrics-grid .metric-box:nth-child(5) { grid-column: 2 / 4; }
+
+  .dual-track {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .dual-track h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+
+  .dual-track-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .track {
+    padding: 1.2rem 1.5rem;
+    border-radius: 8px;
+    background: var(--white);
+    border-left: 4px solid var(--accent);
+  }
+
+  .track h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 0.6rem;
+  }
+
+  .track p {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--gray-600);
+  }
+
+  /* ===== Scroll indicator ===== */
+  .scroll-hint {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 2rem;
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .scroll-hint .arrow {
+    display: inline-block;
+    animation: bounce 1.5s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+
+  /* ===== Print styles ===== */
+  @media print {
+    html { scroll-snap-type: none; }
+    .slide {
+      min-height: auto;
+      height: auto;
+      page-break-after: always;
+      padding: 2rem;
+    }
+    .slide:last-child { page-break-after: avoid; }
+    .scroll-hint { display: none; }
+    .pain-card:hover { box-shadow: none; }
+    .slide--cover {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .slide { padding: 2rem 1.5rem 3rem; }
+    .cover-title { font-size: 2.6rem; }
+    .cover-subtitle { font-size: 1.1rem; }
+    .cover-tagline { font-size: 1rem; padding: 0.8rem 1.2rem; }
+    .slide-header h2 { font-size: 1.6rem; }
+    .solution-columns { grid-template-columns: 1fr; }
+    .advantages { grid-template-columns: 1fr; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .metrics-grid .metric-box:nth-child(5) { grid-column: 1 / 3; }
+    .dual-track-cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Cover -->
+<section class="slide slide--cover" id="slide-1">
+  <div class="slide-content">
+    <div class="cover-title">泰然策略解密</div>
+    <div class="cover-divider"></div>
+    <div class="cover-subtitle">Talent Intelligence Strategies (TIS)</div>
+    <div class="cover-tagline">以 AI 驅動的智慧財產權服務，為中小企業打造「智財防彈衣」</div>
+    <div class="cover-bottom">公司簡介 ｜ 2026</div>
+  </div>
+  <div class="slide-footer light">&copy; 2026 泰然策略解密 Talent Intelligence Strategies | Confidential</div>
+</section>
+
+<!-- Slide 2: Pain Points -->
+<section class="slide" id="slide-2">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2>市場痛點 <span class="em-dash">—</span> 台灣中小企業的專利困境</h2>
+      <span class="header-line"></span>
+    </div>
+    <div class="pain-points">
+      <div class="pain-card">
+        <div class="pain-icon">&#x1F3ED;</div>
+        <div class="pain-body">
+          <h3>結構性劣勢</h3>
+          <p>中小企業佔全台 98.9%，但每年申請發明專利不到 0.1%。台積電一家企業年申請量（1,400~1,900件）就超越全國中小企業總和。超過百萬家企業在國際市場「零防護」。</p>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">&#x1F4B0;</div>
+        <div class="pain-body">
+          <h3>成本壁壘</h3>
+          <p>單件國內專利申請費 NT$50,000~78,500，且台灣非 PCT 締約國，跨國佈局成本更高。中小企業被迫在 12 個月內一次性決策所有目標國。</p>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">&#x2696;&#xFE0F;</div>
+        <div class="pain-body">
+          <h3>法院不友善</h3>
+          <p>專利權人第一審勝訴率僅 13~22%，法院接受無效抗辯比例高達 70~80%，訴訟成本高但期望值極低。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">&copy; 2026 泰然策略解密 Talent Intelligence Strategies | Confidential</div>
+</section>
+
+<!-- Slide 3: Solution -->
+<section class="slide" id="slide-3">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2>我們的解決方案</h2>
+      <div class="solution-subtitle">兩大商業模式，一個完整生態系</div>
+      <span class="header-line"></span>
+    </div>
+    <div class="solution-columns">
+      <div class="solution-col">
+        <h3>商業模式一：<br>專利單一授權窗口（Patent Clearinghouse）</h3>
+        <ul>
+          <li>整合國內外專利資源，打造專利界的「MUST（音樂著作權協會）」</li>
+          <li>非獨家、有限期間授權（3個月／1年／3年）</li>
+          <li>每月不到一萬元，取得 30 個專利防禦覆蓋</li>
+          <li>訂閱制：國家 &times; 產業 &times; 30 專利</li>
+          <li>首選四國：美國、歐洲、日本、台灣</li>
+        </ul>
+      </div>
+      <div class="solution-col">
+        <h3>商業模式二：<br>AI 驅動的智財服務平台</h3>
+        <ul>
+          <li>SABCD 專利分級評估系統</li>
+          <li>AI 驅動的 FTO（自由實施分析）</li>
+          <li>專利評價與迴避設計指引</li>
+          <li>SaaS 訂閱制（點數制）</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">&copy; 2026 泰然策略解密 Talent Intelligence Strategies | Confidential</div>
+</section>
+
+<!-- Slide 4: Competitive Advantage -->
+<section class="slide" id="slide-4">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2>核心競爭力</h2>
+      <div class="solution-subtitle">技術壁壘與獨家優勢</div>
+      <span class="header-line"></span>
+    </div>
+    <div class="advantages">
+      <div class="advantage-card">
+        <div class="adv-icon">&#x1F310;</div>
+        <h3>全球第四大智財資料庫</h3>
+        <p>由策略夥伴新穎（Innovue）提供，無可比擬的數據廣度與深度</p>
+      </div>
+      <div class="advantage-card">
+        <div class="adv-icon">&#x1F916;</div>
+        <h3>專有大型語言模型</h3>
+        <p>精準且易懂的專利文本分析，實現自動化 FTO 掃描與 SABCD 評級</p>
+      </div>
+      <div class="advantage-card">
+        <div class="adv-icon">&#x1F6E1;&#xFE0F;</div>
+        <h3>SABCD 評級系統</h3>
+        <p>獨家五級專利分級引擎（S／A／B／C／D），將專利轉化為可量化定價的防禦商品。一魚三吃：服務創投、企業、孵化器</p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">&copy; 2026 泰然策略解密 Talent Intelligence Strategies | Confidential</div>
+</section>
+
+<!-- Slide 5: Team & Resources -->
+<section class="slide" id="slide-5">
+  <div class="slide-content">
+    <div class="slide-header">
+      <h2>團隊與資源</h2>
+      <div class="solution-subtitle">穩健的起步基礎</div>
+      <span class="header-line"></span>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-box">
+        <div class="metric-label">資本額</div>
+        <div class="metric-value">NT$12,500,000<br><span style="font-size:0.75rem;font-weight:400;opacity:0.7">新穎投資 NT$500 萬取得 25% 股權</span></div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">核心團隊</div>
+        <div class="metric-value">4 位領域專家</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">營運跑道</div>
+        <div class="metric-value">18–20 個月</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">技術核心</div>
+        <div class="metric-value">Innovue 全力支援</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-label">24 個月目標</div>
+        <div class="metric-value">月營收 NT$100 萬</div>
+      </div>
+    </div>
+    <div class="dual-track">
+      <h3>雙軌市場策略</h3>
+      <div class="dual-track-cols">
+        <div class="track">
+          <h4>&#x1F1F9;&#x1F1FC; 台灣市場</h4>
+          <p>產品開發、PMF 驗證、客戶服務</p>
+        </div>
+        <div class="track">
+          <h4>&#x1F1FA;&#x1F1F8; 美國市場</h4>
+          <p>矽谷公司、VC／Startup BD、海外擴張</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">&copy; 2026 泰然策略解密 Talent Intelligence Strategies | Confidential</div>
+</section>
+
+<!-- Scroll hint -->
+<div class="scroll-hint" id="scrollHint">
+  <span class="arrow">&#x2193;</span> Scroll or use arrow keys
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  const hint = document.getElementById('scrollHint');
+
+  // Arrow key navigation
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      const next = getCurrentSlideIndex() + 1;
+      if (next < totalSlides) slides[next].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const prev = getCurrentSlideIndex() - 1;
+      if (prev >= 0) slides[prev].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  function getCurrentSlideIndex() {
+    let closest = 0;
+    let minDist = Infinity;
+    slides.forEach(function(slide, i) {
+      const dist = Math.abs(slide.getBoundingClientRect().top);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    });
+    return closest;
+  }
+
+  // Hide hint on last slide
+  window.addEventListener('scroll', function() {
+    const idx = getCurrentSlideIndex();
+    hint.style.opacity = idx >= totalSlides - 1 ? '0' : '0.7';
+  });
+})();
+</script>
+</body>
+</html>

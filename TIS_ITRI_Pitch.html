@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIS 專利授權平台 — 工研院合作提案</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#1a365d;--accent:#2b6cb0;--light:#e2e8f0;--green:#38a169;--red:#e53e3e;--purple:#805ad5;--gold:#d69e2e}
+html{font-family:'Noto Sans TC',sans-serif;scroll-behavior:smooth}
+body{background:#0f1b2d;color:#1a202c}
+#deck{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 6vw 80px;position:relative;background:#fff}
+.slide-dark{background:linear-gradient(135deg,#0f1b2d 0%,#1a365d 50%,#2b6cb0 100%);color:#fff}
+.slide h1{font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:900;color:var(--navy);margin-bottom:24px;text-align:center;line-height:1.4}
+.slide-dark h1{color:#fff}
+.slide h2{font-size:clamp(1rem,2vw,1.3rem);font-weight:500;color:var(--accent);margin-bottom:16px;text-align:center}
+.slide-dark h2{color:#cbd5e0}
+.subtitle{font-size:clamp(1.1rem,2.2vw,1.5rem);color:#a0aec0;font-weight:300;margin-bottom:12px}
+.tagline{font-size:clamp(0.95rem,1.8vw,1.2rem);color:#63b3ed;margin-top:20px;padding:14px 28px;border:1px solid rgba(99,179,237,.4);border-radius:8px;text-align:center;max-width:700px}
+.bottom-label{position:absolute;bottom:90px;font-size:.95rem;color:#718096;letter-spacing:2px}
+footer{position:fixed;bottom:0;left:0;width:100%;background:var(--navy);color:#a0aec0;text-align:center;font-size:.75rem;padding:8px 0;z-index:100;letter-spacing:1px}
+#counter{position:fixed;bottom:30px;right:24px;background:rgba(26,54,93,.85);color:#fff;font-size:.8rem;padding:4px 12px;border-radius:12px;z-index:101}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;width:100%;max-width:1000px;margin-top:20px}
+.card{background:#f7fafc;border-radius:12px;padding:28px 22px;text-align:center;border:1px solid #e2e8f0;transition:transform .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.card .big{font-size:2.8rem;font-weight:900;color:var(--accent);display:block;margin-bottom:8px}
+.card p{font-size:.9rem;color:#4a5568;line-height:1.6}
+.card-green{border-left:4px solid var(--green)}
+.card-purple{border-left:4px solid var(--purple)}
+.card-blue{border-left:4px solid var(--accent)}
+.card-dark{background:var(--navy);color:#fff;border:none}
+.card-dark .big{color:#63b3ed}
+.card-dark p{color:#cbd5e0}
+table{border-collapse:collapse;width:100%;max-width:950px;margin-top:16px;font-size:.88rem}
+th{background:var(--navy);color:#fff;padding:12px 14px;text-align:left;font-weight:500}
+td{padding:10px 14px;border-bottom:1px solid #e2e8f0}
+tr:nth-child(even){background:#f7fafc}
+.callout{background:linear-gradient(135deg,#ebf8ff,#bee3f8);border-left:4px solid var(--accent);padding:18px 24px;border-radius:0 8px 8px 0;margin-top:24px;max-width:800px;font-size:.95rem;color:var(--navy);font-weight:500;text-align:center}
+.callout-gold{background:linear-gradient(135deg,#fffff0,#fefcbf);border-left-color:var(--gold)}
+.highlight{display:inline-block;background:linear-gradient(135deg,#ebf8ff,#bee3f8);padding:10px 22px;border-radius:8px;font-weight:700;color:var(--navy);margin-top:16px;font-size:1rem}
+.flow{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:20px;max-width:1000px}
+.flow-step{background:#f7fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;flex:1;min-width:200px;text-align:center}
+.flow-step .num{display:inline-block;background:var(--accent);color:#fff;width:32px;height:32px;border-radius:50%;line-height:32px;font-weight:700;margin-bottom:8px}
+.flow-step h3{font-size:.95rem;color:var(--navy);margin-bottom:6px}
+.flow-step p{font-size:.82rem;color:#4a5568;line-height:1.5}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;max-width:900px;margin-top:20px}
+.metric{background:#f7fafc;border-radius:10px;padding:18px;text-align:center;border:1px solid #e2e8f0}
+.metric .val{font-size:1.6rem;font-weight:900;color:var(--accent)}
+.metric .label{font-size:.78rem;color:#718096;margin-top:4px}
+.waterfall{display:flex;align-items:flex-end;gap:12px;justify-content:center;margin-top:24px;height:220px}
+.bar{display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.bar-fill{width:60px;border-radius:6px 6px 0 0;display:flex;align-items:flex-end;justify-content:center;color:#fff;font-size:.72rem;font-weight:700;padding-bottom:6px}
+.bar-label{font-size:.72rem;color:#4a5568;margin-top:6px;text-align:center;max-width:70px}
+.timeline{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;margin-top:24px;max-width:950px}
+.phase{background:#f7fafc;border:2px solid var(--accent);border-radius:12px;padding:22px;flex:1;min-width:220px}
+.phase h3{color:var(--accent);font-size:1rem;margin-bottom:8px}
+.phase p{font-size:.85rem;color:#4a5568;line-height:1.6}
+.ask-box{background:linear-gradient(135deg,#ebf8ff,#bee3f8);border-radius:12px;padding:24px 32px;margin-top:24px;max-width:600px;text-align:left}
+.ask-box p{font-size:.92rem;color:var(--navy);line-height:1.8}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1000px;margin-top:20px}
+.col{border-radius:12px;padding:24px;color:#fff}
+.col h3{font-size:1.05rem;margin-bottom:12px}
+.col ul{list-style:none;padding:0}
+.col li{font-size:.88rem;line-height:1.8;padding-left:18px;position:relative}
+.col li::before{content:'>';position:absolute;left:0;color:rgba(255,255,255,.6)}
+.col-green{background:linear-gradient(135deg,#276749,#38a169)}
+.col-purple{background:linear-gradient(135deg,#553c9a,#805ad5)}
+.col-blue{background:linear-gradient(135deg,#1a365d,#2b6cb0)}
+.note{font-size:.82rem;color:#718096;margin-top:16px;text-align:center;max-width:800px}
+.content-wrap{width:100%;max-width:1000px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:1000px;margin-top:16px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}.cols{grid-template-columns:1fr}}
+ul.bullets{list-style:none;padding:0;max-width:800px;margin-top:16px}
+ul.bullets li{font-size:.92rem;line-height:1.8;padding:8px 0 8px 24px;position:relative;color:#2d3748}
+ul.bullets li::before{content:'\25B6';position:absolute;left:0;color:var(--accent);font-size:.7rem;top:12px}
+</style>
+</head>
+<body>
+<div id="deck">
+
+<!-- SLIDE 1: Cover -->
+<section class="slide slide-dark" id="s1">
+<h2 class="subtitle">工研院合作提案</h2>
+<h1 style="font-size:clamp(2.2rem,5vw,3.5rem);margin-bottom:12px">TIS 專利授權平台</h1>
+<div class="tagline">零成本、零風險，將閒置專利轉化為穩定季度收入</div>
+<span class="bottom-label">泰然策略解密 ｜ 2026</span>
+</section>
+
+<!-- SLIDE 2: Problem -->
+<section class="slide" id="s2">
+<h1>超過百萬家台灣中小企業<br>在國際市場「裸奔」</h1>
+<div class="cards">
+<div class="card"><span class="big">98.9%</span><p>中小企業佔全台企業總數</p></div>
+<div class="card"><span class="big">&lt; 0.1%</span><p>每年申請發明專利比例</p></div>
+<div class="card"><span class="big">1,400+</span><p>台積電一家年申請量<br>超越全國中小企業</p></div>
+</div>
+<div class="callout">三重困境：沒有專利防護、缺乏國際談判籌碼、面對 NPE 訴訟束手無策</div>
+</section>
+
+<!-- SLIDE 3: LOT vs TIS -->
+<section class="slide" id="s3">
+<h1>LOT 聯盟 vs. TIS 平台</h1>
+<table>
+<tr><th>比較項目</th><th>LOT 聯盟</th><th>TIS 平台</th></tr>
+<tr><td>年度金額</td><td>~30 萬 NTD</td><td>~10 萬 NTD 起</td></tr>
+<tr><td>防禦性質</td><td>被動</td><td>主動</td></tr>
+<tr><td>透明度</td><td>低</td><td>高</td></tr>
+<tr><td>中小企業友善度</td><td>低</td><td>高</td></tr>
+<tr><td>策略價值</td><td>僅防 NPE</td><td>主動掩體 + PR + FTO</td></tr>
+</table>
+<div class="callout-gold callout">LOT 要你付錢等被打，TIS 讓你花小錢穿盔甲</div>
+</section>
+
+<!-- SLIDE 4: MUST analogy -->
+<section class="slide" id="s4">
+<h1>專利界的 MUST（音樂著作權協會）</h1>
+<ul class="bullets">
+<li>非獨家、有限期間授權 — 不影響專利所有權人任何權益</li>
+<li>與工研院既有授權業務互不衝突，完全增量</li>
+<li>訂閱制將資本支出（CapEx）轉化為營運費用（OpEx）</li>
+<li>建構三層生態系：供應商（工研院）→ 平台（TIS）→ 被授權人（中小企業）</li>
+</ul>
+<div class="highlight">每月不到一萬元，取得 30 個專利防禦覆蓋</div>
+</section>
+
+<!-- SLIDE 5: IP Bulletproof Vest -->
+<section class="slide" id="s5">
+<h1>智財防彈衣 — 心理威懾與風險緩釋</h1>
+<div class="cards">
+<div class="card card-dark"><span class="big" style="font-size:1.8rem">品牌與投資信心</span><p>工研院商標授權背書<br>提升國際合作夥伴信任度</p></div>
+<div class="card card-dark"><span class="big" style="font-size:1.8rem">增加 NPE 進攻成本</span><p>不戰而屈人之兵<br>持有授權即提高對手訴訟門檻</p></div>
+<div class="card card-dark"><span class="big" style="font-size:1.8rem">戰略價值數學基礎</span><p>SABCD 加權模型<br>量化每份授權的威懾力</p></div>
+</div>
+</section>
+
+<!-- SLIDE 6: Subscription Model -->
+<section class="slide" id="s6">
+<h1>訂閱制：國家 &times; 產業 &times; 30 專利</h1>
+<div class="flow">
+<div class="flow-step"><span class="num">1</span><h3>選國家 + 產業</h3><p>US / EP / JP / TW<br>12 大產業類別</p></div>
+<div class="flow-step"><span class="num">2</span><h3>SABCD 配比分配</h3><p>初始配比<br>S:5 / A:6 / B:9 / C:6 / D:4</p></div>
+<div class="flow-step"><span class="num">3</span><h3>AI 推薦或 FTO 導向</h3><p>智慧推薦引擎<br>依企業需求客製</p></div>
+<div class="flow-step"><span class="num">4</span><h3>DLC 即時生效</h3><p>數位授權憑證<br>簽約即啟動防護</p></div>
+</div>
+</section>
+
+<!-- SLIDE 7: SABCD Engine -->
+<section class="slide" id="s7">
+<h1>獨家五級專利評估引擎 SABCD</h1>
+<table>
+<tr><th>等級</th><th>定義</th><th>佔比</th><th>權重係數</th></tr>
+<tr><td style="font-weight:900;color:var(--gold)">S</td><td>頂級戰略</td><td>15%</td><td>3.0&times;</td></tr>
+<tr><td style="font-weight:900;color:var(--accent)">A</td><td>高價值核心</td><td>20%</td><td>2.0&times;</td></tr>
+<tr><td style="font-weight:900;color:var(--green)">B</td><td>實用技術</td><td>30%</td><td>1.5&times;</td></tr>
+<tr><td style="font-weight:900;color:#718096">C</td><td>一般防禦</td><td>20%</td><td>1.2&times;</td></tr>
+<tr><td style="font-weight:900;color:#a0aec0">D</td><td>基礎佈局</td><td>15%</td><td>1.0&times;</td></tr>
+</table>
+<p class="note">定級穩定性原則：專利等級每年最多調整一級，確保授權人與被授權人的預期穩定</p>
+</section>
+
+<!-- SLIDE 8: MSRP Pricing -->
+<section class="slide" id="s8">
+<h1>國家別 MSRP 與雙軌評估分級</h1>
+<div class="two-col">
+<div>
+<h2>季度定價（NTD）</h2>
+<table>
+<tr><th>國家</th><th>Premium</th><th>Pro</th><th>Plus</th></tr>
+<tr><td>US</td><td>9,990</td><td>8,990</td><td>7,990</td></tr>
+<tr><td>EP / JP</td><td colspan="3" style="text-align:center;color:#718096">待定</td></tr>
+<tr><td>TW</td><td>4,990</td><td>4,490</td><td>3,990</td></tr>
+</table>
+</div>
+<div>
+<h2>雙軌評估分級</h2>
+<div class="card" style="margin-top:8px">
+<p><strong>Track A</strong><br>專利池數量排名</p>
+<p style="margin-top:12px"><strong>Track B</strong><br>出口貿易額排名</p>
+<p style="margin-top:12px;color:var(--accent);font-weight:700">兩軌交叉 → 國家分級定價</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SLIDE 9: Discount & Renewal -->
+<section class="slide" id="s9">
+<h1>靈活的期間折扣與續約機制</h1>
+<h2>美國市場定價範例（NTD / 季）</h2>
+<table>
+<tr><th>方案</th><th>短期（1季）</th><th>中期（4季）&times;0.90</th><th>長期（8季）&times;0.85</th></tr>
+<tr><td>Premium</td><td>9,990</td><td>8,991</td><td>8,492</td></tr>
+<tr><td>Pro</td><td>8,990</td><td>8,091</td><td>7,642</td></tr>
+<tr><td>Plus</td><td>7,990</td><td>7,191</td><td>6,792</td></tr>
+</table>
+<div style="margin-top:20px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+<div class="card" style="flex:1;max-width:280px"><span class="big" style="font-size:1.4rem">0.975&times;</span><p>續約折扣（中期）</p></div>
+<div class="card" style="flex:1;max-width:280px"><span class="big" style="font-size:1.4rem">0.95&times;</span><p>續約折扣（長期）</p></div>
+</div>
+<div class="highlight">月均 &lt; NT$10,000 即享 30 件專利防護</div>
+</section>
+
+<!-- SLIDE 10: Revenue Split -->
+<section class="slide" id="s10">
+<h1>透明的分潤機制</h1>
+<div class="waterfall">
+<div class="bar"><div class="bar-fill" style="height:200px;background:#4a5568">100%</div><div class="bar-label">含稅總額</div></div>
+<div class="bar"><div class="bar-fill" style="height:20px;background:var(--red)">4.76%</div><div class="bar-label">營業稅</div></div>
+<div class="bar"><div class="bar-fill" style="height:30px;background:var(--accent)">15%</div><div class="bar-label">平台費</div></div>
+<div class="bar"><div class="bar-fill" style="height:150px;background:var(--green)">75%</div><div class="bar-label">供應商</div></div>
+<div class="bar"><div class="bar-fill" style="height:50px;background:var(--navy)">25%</div><div class="bar-label">TIS</div></div>
+</div>
+<p class="note" style="margin-top:28px">供應商佔總營收約 60%，按季結算、透明對帳</p>
+</section>
+
+<!-- SLIDE 11: ITRI Projection -->
+<section class="slide" id="s11">
+<h1>工研院全期分潤預估</h1>
+<div class="metric-grid">
+<div class="metric"><div class="val">500 件</div><div class="label">入池專利</div></div>
+<div class="metric"><div class="val">65 件</div><div class="label">被授權（13%）</div></div>
+<div class="metric"><div class="val">295,776</div><div class="label">發票總額（NTD）</div></div>
+<div class="metric"><div class="val">281,694</div><div class="label">淨收入（NTD）</div></div>
+<div class="metric"><div class="val">13 / 16</div><div class="label">活躍季度</div></div>
+<div class="metric"><div class="val">37,758</div><div class="label">峰值 Y1Q4</div></div>
+</div>
+<table style="margin-top:24px;max-width:600px">
+<tr><th>年度</th><th>Y1</th><th>Y2</th><th>Y3</th><th>Y4</th></tr>
+<tr><td>淨收入（NTD）</td><td>93,827</td><td>104,257</td><td>89,312</td><td>8,380</td></tr>
+</table>
+<div class="callout" style="margin-top:20px">零成本投入，ROI 無限大</div>
+</section>
+
+<!-- SLIDE 12: Zero Cost -->
+<section class="slide" id="s12">
+<h1>零成本、零風險、品牌加分</h1>
+<div class="cards">
+<div class="card card-dark"><span class="big" style="font-size:1.6rem">零成本純增益</span><p>ROI = &infin;<br>無需額外人力或預算</p></div>
+<div class="card card-dark"><span class="big" style="font-size:1.6rem">使命達成</span><p>活化閒置專利<br>回應監察院建議</p></div>
+<div class="card card-dark"><span class="big" style="font-size:1.6rem">品牌價值</span><p>授權標章成為社會證明<br>擴大工研院影響力</p></div>
+</div>
+<div class="callout-gold callout" style="font-size:1.1rem;font-weight:700">「我們不要你投錢，只要你點頭」</div>
+</section>
+
+<!-- SLIDE 13: Triple Win -->
+<section class="slide" id="s13">
+<h1>中小企業 &times; 工研院 &times; TIS</h1>
+<div class="cols">
+<div class="col col-green">
+<h3>對中小企業</h3>
+<ul>
+<li>即時取得專利防禦能力</li>
+<li>月費遠低於 NPE 和解金</li>
+<li>增加國際商業談判籌碼</li>
+<li>如同買保險的概念</li>
+</ul>
+</div>
+<div class="col col-purple">
+<h3>對工研院</h3>
+<ul>
+<li>零成本活化閒置專利</li>
+<li>穩定季度分潤收入</li>
+<li>品牌影響力擴散</li>
+<li>回應監察院政策建議</li>
+</ul>
+</div>
+<div class="col col-blue">
+<h3>對 TIS</h3>
+<ul>
+<li>建立長期客戶關係</li>
+<li>擴大專利防護網</li>
+<li>SaaS 訂閱模式營收</li>
+<li>FTO 加值服務營收</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- SLIDE 14: Call to Action -->
+<section class="slide" id="s14">
+<h1>邀請工研院成為首波合作夥伴</h1>
+<div class="timeline">
+<div class="phase"><h3>Phase 1 — 立即</h3><p>500 件專利上架<br>啟動授權營運</p></div>
+<div class="phase"><h3>Phase 2 — 6-12 個月</h3><p>篩選美國專利<br>擴展國際市場覆蓋</p></div>
+<div class="phase"><h3>Phase 3 — 12-24 個月</h3><p>引入資策會等供應商<br>壯大生態系</p></div>
+</div>
+<div class="ask-box">
+<p><strong>我們的請求：</strong></p>
+<p>&#9989; 授權 500 件閒置專利進入平台</p>
+<p>&#9989; 工研院商標授權使用</p>
+<p>&#9989; 指定合作對接窗口</p>
+<p style="margin-top:12px;color:var(--accent);font-weight:700">進階選項：直接投資 TIS，共享平台成長紅利</p>
+</div>
+</section>
+
+</div>
+
+<footer>&copy; 2026 泰然策略解密 TIS &#124; 機密文件</footer>
+<div id="counter">1 / 14</div>
+
+<script>
+(function(){
+const deck=document.getElementById('deck');
+const total=14;
+function current(){
+const sh=deck.scrollHeight;
+const st=deck.scrollTop;
+const vh=window.innerHeight;
+return Math.round(st/vh)+1;
+}
+function update(){document.getElementById('counter').textContent=current()+' / '+total;}
+deck.addEventListener('scroll',update);
+document.addEventListener('keydown',function(e){
+const c=current();
+if(e.key==='ArrowDown'||e.key==='ArrowRight'){
+e.preventDefault();
+if(c<total){const t=document.getElementById('s'+(c+1));if(t)t.scrollIntoView({behavior:'smooth'});}
+}
+if(e.key==='ArrowUp'||e.key==='ArrowLeft'){
+e.preventDefault();
+if(c>1){const t=document.getElementById('s'+(c-1));if(t)t.scrollIntoView({behavior:'smooth'});}
+}
+});
+})();
+</script>
+</body>
+</html>
