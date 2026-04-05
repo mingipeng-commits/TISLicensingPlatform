@@ -74,6 +74,7 @@ These are the core parameters shared across documents. When changing any of thes
 | Period discounts | Short-term ×1.0 / Mid-term ×0.90 / Long-term ×0.85 | 商業討論 §7.3 |
 | Renewal discounts | 2nd term ×0.975 / 3rd+ term ×0.95 (cap) | 商業討論 §7.6 |
 | Revenue waterfall | Gross → 5% tax → 15% platform fee → pool (75% supplier / 25% TIS) | 商業討論 §6.1 |
+| PSS (Patent Strength Score) | 8 pillars, 50 indicators, 0-100 score → percentile → SABCD | 商業討論 §3.2.2, PSS-Whitepaper.docx |
 | SABCD weights | S=3.0× / A=2.0× / B=1.5× / C=1.2× / D=1.0× | 商業討論 §3.2 |
 | Initial SABCD split | 5S/6A/9B/6C/4D per 30-patent pack (uniform at launch, weighted 51.7) | 商業討論 §3.3.1 |
 | Dynamic SABCD | Each industry's ratio evolves as new suppliers join; new subscribers use current ratio | 商業討論 §3.3.2 |
