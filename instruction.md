@@ -68,7 +68,7 @@ These are the core parameters shared across documents. When changing any of thes
 
 | Parameter | Value | Defined In |
 |:---|:---|:---|
-| Industry tiers | Premium / Pro / Plus (4-4-4 ranking by patent volume) | 商業討論 §7.2 |
+| Industry tiers | Premium / Pro / Plus (dual-track: patent volume + export value) | 商業討論 §7.2.2 |
 | MSRP (per country) | US: 9,990/8,990/7,990; TW: 4,990/4,490/3,990; EP/JP: TBD | 商業討論 §7.2.1 |
 | Tier classification | Dual-track: Track A (patent pool volume) + Track B (export value) | 商業討論 §7.2.2 |
 | Period discounts | Short-term ×1.0 / Mid-term ×0.90 / Long-term ×0.85 | 商業討論 §7.3 |
@@ -82,7 +82,7 @@ These are the core parameters shared across documents. When changing any of thes
 | Subscription unit | 1 Country × 1 Industry × 30 patents | 商業討論 §3.5.2, §4.1 |
 | Licensing periods | 3 months / 1 year / 3 years | 商業討論 §4 |
 | Payment terms | Short/Mid: full upfront; Long: 50% at M1, 50% at M19 | 商業討論 §7.5 |
-| ABCD simulation customers | D (3yr Premium), B (1yr×3 Pro), C (1yr×2 Pro), A (3mo Plus) | 商業討論 §1.1 |
+| ABCD simulation customers | D (3yr Premium 半導體), B (1yr×3 Pro 汽車零組件), C (1yr×2 Pro 生技), A (3mo Plus 機械設備) | 商業討論 §1.1 |
 
 ---
 
